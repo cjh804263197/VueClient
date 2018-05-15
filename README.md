@@ -1,6 +1,18 @@
-# VueClient
-Vue+iVew客户端
-#### 下载依赖
+# vue-client
+
+> A Vue.js project
+
+## Build Setup
+
+``` bash
+# install dependencies
 npm install
-#### 运行
+
+# serve with hot reload at localhost:8080
 npm run dev
+
+# build for production with minification
+npm run build
+```
+
+For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
