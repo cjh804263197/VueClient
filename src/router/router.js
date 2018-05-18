@@ -72,6 +72,9 @@ export const appRouter = [
         name: 'access',
         title: '权限管理',
         component: Main,
+        meta: {
+            roles: ['建设单位主管', '劳务队长'] // you can set roles in root nav
+        },
         children: [
             { path: 'index', title: '权限管理', name: 'access_index', component: () => import('@/views/access/access.vue') }
         ]
@@ -81,8 +84,10 @@ export const appRouter = [
         icon: 'lock-combination',
         title: '权限测试页',
         name: 'accesstest',
-        access: 0,
         component: Main,
+        meta: {
+            roles: ['劳务队长'] // you can set roles in root nav
+        },
         children: [
             { path: 'index', title: '权限测试页', name: 'accesstest_index', access: 0, component: () => import('@/views/access/access-test.vue') }
         ]
@@ -93,6 +98,9 @@ export const appRouter = [
         title: {i18n: 'international'},
         name: 'international',
         component: Main,
+        meta: {
+            roles: ['建设单位主管', '劳务队长'] // you can set roles in root nav
+        },
         children: [
             { path: 'index', title: {i18n: 'international'}, name: 'international_index', component: () => import('@/views/international/international.vue') }
         ]
@@ -109,6 +117,9 @@ export const appRouter = [
                 icon: 'compose',
                 name: 'text-editor',
                 title: '富文本编辑器',
+                meta: {
+                    roles: ['劳务队长'] // you can set roles in root nav
+                },
                 component: () => import('@/views/my-components/text-editor/text-editor.vue')
             },
             {
@@ -123,6 +134,9 @@ export const appRouter = [
                 icon: 'crop',
                 name: 'image-editor',
                 title: '图片预览编辑',
+                meta: {
+                    roles: ['劳务队长'] // you can set roles in root nav
+                },
                 component: () => import('@/views/my-components/image-editor/image-editor.vue')
             },
             {
@@ -137,6 +151,9 @@ export const appRouter = [
                 icon: 'ios-more',
                 name: 'area-linkage',
                 title: '城市级联',
+                meta: {
+                    roles: ['劳务队长'] // you can set roles in root nav
+                },
                 component: () => import('@/views/my-components/area-linkage/area-linkage.vue')
             },
             {
@@ -151,7 +168,9 @@ export const appRouter = [
                 icon: 'arrow-graph-up-right',
                 name: 'count-to',
                 title: '数字渐变',
-                // component: () => import('@/views/my-components/count-to/count-to.vue')
+                meta: {
+                    roles: ['劳务队长'] // you can set roles in root nav
+                },
                 component: () => import('@/views/my-components/count-to/count-to.vue')
             },
             {
@@ -169,6 +188,9 @@ export const appRouter = [
         name: 'form',
         title: '表单编辑',
         component: Main,
+        meta: {
+            roles: ['劳务队长'] // you can set roles in root nav
+        },
         children: [
             { path: 'artical-publish', title: '文章发布', name: 'artical-publish', icon: 'compose', component: () => import('@/views/form/article-publish/article-publish.vue') },
             { path: 'workflow', title: '工作流', name: 'workflow', icon: 'arrow-swap', component: () => import('@/views/form/work-flow/work-flow.vue') }
@@ -192,6 +214,9 @@ export const appRouter = [
         icon: 'ios-grid-view',
         name: 'tables',
         title: '表格',
+        meta: {
+            roles: ['劳务队长'] // you can set roles in root nav
+        },
         component: Main,
         children: [
             { path: 'dragableTable', title: '可拖拽排序', name: 'dragable-table', icon: 'arrow-move', component: () => import('@/views/tables/dragable-table.vue') },
@@ -218,6 +243,9 @@ export const appRouter = [
         title: '错误页面',
         name: 'errorpage',
         component: Main,
+        meta: {
+            roles: ['劳务队长'] // you can set roles in root nav
+        },
         children: [
             { path: 'index', title: '错误页面', name: 'errorpage_index', component: () => import('@/views/error-page/error-page.vue') }
         ]

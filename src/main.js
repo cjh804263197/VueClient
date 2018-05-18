@@ -22,10 +22,10 @@ new Vue({
     mounted () {
         this.currentPageName = this.$route.name;
         // 显示打开的页面的列表
-        this.$store.commit('setOpenedList');
-        this.$store.commit('initCachepage');
+        this.$store.commit('setOpenedList')
+        this.$store.commit('initCachepage')
         // 权限菜单过滤相关
-        this.$store.commit('updateMenulist');
+        // this.$store.commit('updateMenulist')
     },
     created () {
         let tagsList = [];

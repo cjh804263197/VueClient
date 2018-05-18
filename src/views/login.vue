@@ -85,6 +85,12 @@ export default {
                     corp_user_login(this.form.username, this.form.password).then(
                         res => {
                             console.warn(`res.status=${JSON.stringify(res)}`)
+                            Cookies.set('user', JSON.stringify(res.user))
+                            // Cookies.set('password', this.form.password)
+                            this.$store.commit('setAvator', 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3448484253,3685836170&fm=27&gp=0.jpg')
+                            this.$router.push({
+                                name: 'home_index'
+                            })
                         }
                     ).catch(
                         err => {
