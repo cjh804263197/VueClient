@@ -36,6 +36,7 @@ router.beforeEach((to, from, next) => {
                 name: 'home_index'
             });
         } else {
+            // 通过路由名称找到该路由对象
             const curRouterObj = Util.getRouterObjByName([otherRouter, ...appRouter], to.name);
             if (curRouterObj && curRouterObj.access !== undefined) { // 需要判断权限的路由
                 if (curRouterObj.access === parseInt(Cookies.get('access'))) {
