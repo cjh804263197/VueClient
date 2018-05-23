@@ -110,20 +110,25 @@ export default {
         selectImg
     },
     beforeCreate () {
-        get_corp('6e3dff89-6288-406b-856b-12582bbfa1f0').then(
-            res => {
-                console.warn(`res.status=${JSON.stringify(res)}`)
-                this.corpForm = res
-            }
-        ).catch(
-            err => {
-                if (err.response.status === 400) {
-                    this.$Message.error(err.response.data.message)
-                } else {
-                    console.error(`err=${JSON.stringify(err)}`)
+        window.addEventListener("beforeunload", function(event) {
+            event.returnValue = "表单内容尚未保存，是否要离开？"
+        })
+        if (this.$route.params.id) { // 当路由参数中id为undefine,则为添加，否则为修改
+            get_corp('6e3dff89-6288-406b-856b-12582bbfa1f0').then(
+                res => {
+                    console.warn(`res.status=${JSON.stringify(res)}`)
+                    this.corpForm = res
                 }
-            }
-        )
+            ).catch(
+                err => {
+                    if (err.response.status === 400) {
+                        this.$Message.error(err.response.data.message)
+                    } else {
+                        console.error(`err=${JSON.stringify(err)}`)
+                    }
+                }
+            )
+        }
     },
     created () {
         // 加载企业类型选择条件

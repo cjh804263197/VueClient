@@ -25,6 +25,7 @@
 <script>
 import {destory_dic, query_dic} from '@/api/dictionary.js'
 import dataCollection from './data-collection'
+import Vue from 'vue'
 export default {
     components: {
         dataCollection
@@ -52,14 +53,15 @@ export default {
                     title: '添加时间',
                     key: 'createdAt',
                     render: (h, params) => {
-                        return h('div', params.row.createdAt)
+                        // return Vue.filter('timefmt')(params.row.createdAt)
+                        return h('div', Vue.filter('timefmt')(params.row.createdAt))
                     }
                 },
                 {
                     title: '修改时间',
                     key: 'updatedAt',
                     render: (h, params) => {
-                        return h('div', params.row.updatedAt)
+                        return h('div', Vue.filter('timefmt')(params.row.updatedAt))
                     }
                 },
                 {

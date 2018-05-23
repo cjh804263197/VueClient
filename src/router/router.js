@@ -1,4 +1,4 @@
-import Main from '@/views/Main.vue';
+import Main from '@/views/Main.vue'
 
 // 不作为Main组件的子页面展示的页面单独写，如下
 export const loginRouter = {
@@ -8,7 +8,7 @@ export const loginRouter = {
         title: 'Login - 登录'
     },
     component: () => import('@/views/login.vue')
-};
+}
 
 export const page404 = {
     path: '/*',
@@ -17,7 +17,7 @@ export const page404 = {
         title: '404-页面不存在'
     },
     component: () => import('@/views/error-page/404.vue')
-};
+}
 
 export const page403 = {
     path: '/403',
@@ -26,7 +26,7 @@ export const page403 = {
     },
     name: 'error-403',
     component: () => import('@//views/error-page/403.vue')
-};
+}
 
 export const page500 = {
     path: '/500',
@@ -35,19 +35,19 @@ export const page500 = {
     },
     name: 'error-500',
     component: () => import('@/views/error-page/500.vue')
-};
+}
 
 export const preview = {
     path: '/preview',
     name: 'preview',
     component: () => import('@/views/form/article-publish/preview.vue')
-};
+}
 
 export const locking = {
     path: '/locking',
     name: 'locking',
     component: () => import('@/views/main-components/lockscreen/components/locking-page.vue')
-};
+}
 
 // 作为Main组件的子页面展示但是不在左侧菜单显示的路由写在otherRouter里
 export const otherRouter = {
@@ -62,7 +62,7 @@ export const otherRouter = {
         { path: 'shopping', title: '购物详情', name: 'shopping', component: () => import('@/views/advanced-router/component/shopping-info.vue') }, // 用于展示带参路由
         { path: 'message', title: '消息中心', name: 'message_index', component: () => import('@/views/message/message.vue') }
     ]
-};
+}
 
 // 作为Main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
 export const appRouter = [
@@ -73,7 +73,7 @@ export const appRouter = [
         title: '权限管理',
         component: Main,
         meta: {
-            roles: ['建设单位主管', '劳务队长'] // you can set roles in root nav
+            roles: ['xxx'] // you can set roles in root nav
         },
         children: [
             { path: 'index', title: '权限管理', name: 'access_index', component: () => import('@/views/access/access.vue') }
@@ -86,7 +86,7 @@ export const appRouter = [
         name: 'accesstest',
         component: Main,
         meta: {
-            roles: ['劳务队长'] // you can set roles in root nav
+            roles: ['xxx'] // you can set roles in root nav
         },
         children: [
             { path: 'index', title: '权限测试页', name: 'accesstest_index', access: 0, component: () => import('@/views/access/access-test.vue') }
@@ -99,7 +99,7 @@ export const appRouter = [
         name: 'international',
         component: Main,
         meta: {
-            roles: ['建设单位主管', '劳务队长'] // you can set roles in root nav
+            roles: ['xxx'] // you can set roles in root nav
         },
         children: [
             { path: 'index', title: {i18n: 'international'}, name: 'international_index', component: () => import('@/views/international/international.vue') }
@@ -111,6 +111,9 @@ export const appRouter = [
         name: 'component',
         title: '组件',
         component: Main,
+        meta: {
+            roles: ['xxx'] // you can set roles in root nav
+        },
         children: [
             {
                 path: 'text-editor',
@@ -189,7 +192,7 @@ export const appRouter = [
         title: '表单编辑',
         component: Main,
         meta: {
-            roles: ['劳务队长'] // you can set roles in root nav
+            roles: ['xxx'] // you can set roles in root nav
         },
         children: [
             { path: 'artical-publish', title: '文章发布', name: 'artical-publish', icon: 'compose', component: () => import('@/views/form/article-publish/article-publish.vue') },
@@ -215,7 +218,7 @@ export const appRouter = [
         name: 'tables',
         title: '表格',
         meta: {
-            roles: ['劳务队长'] // you can set roles in root nav
+            roles: ['xxx'] // you can set roles in root nav
         },
         component: Main,
         children: [
@@ -232,6 +235,9 @@ export const appRouter = [
         name: 'advanced-router',
         title: '高级路由',
         component: Main,
+        meta: {
+            roles: ['xxx'] // you can set roles in root nav
+        },
         children: [
             { path: 'mutative-router', title: '动态路由', name: 'mutative-router', icon: 'link', component: () => import('@/views/advanced-router/mutative-router.vue') },
             { path: 'argument-page', title: '带参页面', name: 'argument-page', icon: 'android-send', component: () => import('@/views/advanced-router/argument-page.vue') }
@@ -244,7 +250,7 @@ export const appRouter = [
         name: 'errorpage',
         component: Main,
         meta: {
-            roles: ['劳务队长'] // you can set roles in root nav
+            roles: ['xxx'] // you can set roles in root nav
         },
         children: [
             { path: 'index', title: '错误页面', name: 'errorpage_index', component: () => import('@/views/error-page/error-page.vue') }
@@ -270,7 +276,7 @@ export const appRouter = [
             { path: 'corp-add', title: '企业添加', name: 'corp-add', icon: 'link', component: () => import('@/views/corp/corp-edit.vue') }
         ]
     }
-];
+]
 
 // 所有上面定义的路由都要写在下面的routers里
 export const routers = [
@@ -282,4 +288,4 @@ export const routers = [
     page500,
     page403,
     page404
-];
+]

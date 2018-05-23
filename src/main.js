@@ -16,7 +16,7 @@ Vue.filter('datefmt', date => {
     return moment(date).format('yyyy-MM-dd')
 })
 Vue.filter('timefmt', date => {
-    return moment(date).format('yyyy-MM-dd HH:mm:ss')
+    return moment(date).format('YYYY-MM-DD HH:mm:ss')
 })
 
 new Vue({
