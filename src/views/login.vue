@@ -34,7 +34,6 @@
                         </FormItem>
                         <FormItem>
                             <Button @click="handleSubmit" type="primary" long>登录</Button>
-                            <Button @click="handleTest" type="primary" long>ceshi</Button>
                         </FormItem>
                     </Form>
                     <p class="login-tip">请选择对应的角色进行登录</p>
@@ -81,7 +80,6 @@ export default {
                     // this.$router.push({
                     //     name: 'home_index'
                     // });
-                    console.log('进来了111')
                     corp_user_login(this.form.username, this.form.password).then(
                         res => {
                             console.warn(`res.status=${JSON.stringify(res)}`)

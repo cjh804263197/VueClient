@@ -249,6 +249,26 @@ export const appRouter = [
         children: [
             { path: 'index', title: '错误页面', name: 'errorpage_index', component: () => import('@/views/error-page/error-page.vue') }
         ]
+    },
+    {
+        path: '/system-setting',
+        icon: 'ios-infinite',
+        name: 'system-setting',
+        title: '系统设置',
+        component: Main,
+        children: [
+            { path: 'dictionary-manage', title: '数据字典', name: 'dictionary-manage', icon: 'link', component: () => import('@/views/dictionary/data-list.vue') }
+        ]
+    },
+    {
+        path: '/corp-manage',
+        icon: 'ios-infinite',
+        name: 'corp-manage',
+        title: '企业管理',
+        component: Main,
+        children: [
+            { path: 'corp-add', title: '企业添加', name: 'corp-add', icon: 'link', component: () => import('@/views/corp/corp-edit.vue') }
+        ]
     }
 ];
 

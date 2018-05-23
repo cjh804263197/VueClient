@@ -1,15 +1,23 @@
-import Vue from 'vue';
-import iView from 'iview';
-import {router} from './router/index';
-import {appRouter} from './router/router';
-import store from './store';
-import App from './app.vue';
-import '@/locale';
-import 'iview/dist/styles/iview.css';
-import VueI18n from 'vue-i18n';
+import Vue from 'vue'
+import iView from 'iview'
+import {router} from './router/index'
+import {appRouter} from './router/router'
+import store from './store'
+import App from './app.vue'
+import '@/locale'
+import 'iview/dist/styles/iview.css'
+import VueI18n from 'vue-i18n'
+import moment from 'moment'
 
-Vue.use(VueI18n);
-Vue.use(iView);
+Vue.use(VueI18n)
+Vue.use(iView)
+
+Vue.filter('datefmt', date => {
+    return moment(date).format('yyyy-MM-dd')
+})
+Vue.filter('timefmt', date => {
+    return moment(date).format('yyyy-MM-dd HH:mm:ss')
+})
 
 new Vue({
     el: '#app',
@@ -20,7 +28,7 @@ new Vue({
         currentPageName: ''
     },
     mounted () {
-        this.currentPageName = this.$route.name;
+        this.currentPageName = this.$route.name
         // 显示打开的页面的列表
         this.$store.commit('setOpenedList')
         this.$store.commit('initCachepage')
@@ -28,14 +36,14 @@ new Vue({
         // this.$store.commit('updateMenulist')
     },
     created () {
-        let tagsList = [];
+        let tagsList = []
         appRouter.map((item) => {
             if (item.children.length <= 1) {
-                tagsList.push(item.children[0]);
+                tagsList.push(item.children[0])
             } else {
-                tagsList.push(...item.children);
+                tagsList.push(...item.children)
             }
-        });
-        this.$store.commit('setTagsList', tagsList);
+        })
+        this.$store.commit('setTagsList', tagsList)
     }
-});
+})
