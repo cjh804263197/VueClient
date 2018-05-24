@@ -54,7 +54,27 @@ let get_corp = async (id) => {
     return res
 }
 
+let query_corp = async (param) => {
+    console.warn(`param=${JSON.stringify(param)}`)
+    let res = null
+    await request({
+        url: '/corp/query',
+        method: 'post',
+        data: param
+    }).then(
+        response => {
+            res = response.data
+        }
+    ).catch(
+        error => {
+            throw error
+        }
+    )
+    return res
+}
+
 module.exports = {
     get_corp,
-    save_corp
+    save_corp,
+    query_corp
 }

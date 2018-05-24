@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // 创建一个axios实例
 const service = axios.create({
-    baseURL: 'http://192.168.0.103:8090/api',
+    baseURL: 'http://192.168.1.5:8090/api',
     timeout: 5000, // 请求超时时长
     withCredentials: true // 允许携带cookie
 })
