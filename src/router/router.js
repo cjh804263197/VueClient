@@ -273,7 +273,8 @@ export const appRouter = [
         title: '企业管理',
         component: Main,
         children: [
-            { path: 'corp-add', title: '企业添加', name: 'corp-add', icon: 'link', component: () => import('@/views/corp/corp-edit.vue') }
+            { path: 'corp-add', title: '企业添加', name: 'corp-add', icon: 'link', component: () => import('@/views/corp/corp-edit.vue') },
+            { path: 'corp-list', title: '企业查询', name: 'corp-list', icon: 'link', component: () => import('@/views/corp/corp-list.vue') }
         ]
     }
 ]
