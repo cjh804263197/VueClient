@@ -1,13 +1,7 @@
 
 import request from './request'
-import util from '../libs/util'
-import crypto from 'crypto'
+import util from '../libs/util.js'
 
-let md5 = (value) => {
-    let md5 = crypto.createHash('md5')
-    md5.update(value)
-    return md5.digest('hex')
-}
 /**
  * 企业用户添加
  * @param {*} param 参数 企业用户对象
@@ -17,7 +11,7 @@ let save_user = async (param) => {
     delete param.createdAt
     delete param.updatedAt
     if(param.password !== '') {
-        param.password = md5(param.password)
+        param.password = util.md5(param.password)
     } else {
         delete param.password
     }

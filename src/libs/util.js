@@ -2,7 +2,7 @@ import axios from 'axios'
 import env from '../../build/env'
 import semver from 'semver'
 import packjson from '../../package.json'
-import {get_corp} from '@/api/corp'
+import crypto from 'crypto'
 
 let util = {
 
@@ -252,6 +252,7 @@ util.fullscreenEvent = function (vm) {
     // 全屏相关
 }
 util.md5 = function (value) {
+    console.log(1)
     let md5 = crypto.createHash('md5')
     md5.update(value)
     return md5.digest('hex')
