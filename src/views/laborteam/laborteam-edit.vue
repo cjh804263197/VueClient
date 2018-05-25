@@ -2,24 +2,19 @@
 <template>
     <Modal v-model="tranData.visible" :title="title" @on-ok="handleSave" @on-cancel="handleCancel" @on-visible-change="visibleChange" :loading="modal_loading">
         <Form ref="saveForm" :model="saveForm" :rules="ruleValidate" :label-width="80">
-            <FormItem label="所属企业" prop="corpId">
-                <Select v-model="saveForm.corpId" placeholder="请选择所属企业" @on-change="corpChange()" clearable>
+            <FormItem label="所属劳务公司" prop="corpId">
+                <Select v-model="saveForm.corpId" placeholder="请选择所属劳务公司" clearable>
                     <Option v-for="item in corpList" :value="item.id" :key="item.id">{{ item.title }}</Option>
                 </Select>
             </FormItem>
-            <FormItem label="姓名" prop="name">
-                <Input v-model="saveForm.name" placeholder="请输入姓名"/>
+            <FormItem label="劳务队" prop="title">
+                <Input v-model="saveForm.title" placeholder="请输入劳务队名称"/>
             </FormItem>
-            <FormItem label="用户名" prop="username">
-                <Input v-model="saveForm.username" placeholder="请输入用户名"/>
+            <FormItem label="劳务队长" prop="leader">
+                <Input v-model="saveForm.leader" placeholder="请输入劳务队长姓名"/>
             </FormItem>
-            <FormItem label="密码" prop="password" v-if="!tranData.edit">
-                <Input type="password" v-model="saveForm.password" placeholder="请输入密码"/>
-            </FormItem>
-             <FormItem label="职位" prop="position">
-                <Select v-model="saveForm.position" placeholder="请选择职位" clearable on-change>
-                    <Option v-for="item in positions" :value="item.value" :key="item.value">{{ item.value }}</Option>
-                </Select>
+            <FormItem label="联系电话" prop="leaderTel">
+                <Input v-model="saveForm.leaderTel" placeholder="请输入联系电话"/>
             </FormItem>
             <FormItem slot="footer">
                 <Button type="text" @click="handleCancel">取消</Button>
@@ -30,36 +25,30 @@
 </template>
 
 <script>
-import {save_user, get_user} from '../../api/corpUser.js'
+import {save_laborteam, get_laborteam} from '../../api/laborteam.js'
 import {query_corp} from '@/api/corp.js'
-import { query_dic } from '@/api/dictionary.js'
 export default {
     data () {
         return {
             saveForm: { // 保存的form对象
                 corpId: '',
-                name: '',
-                username: '',
-                password: '',
-                position: ''
+                title: '',
+                leader: '',
+                leaderTel: ''
             },
             corpList: [],
-            positions: [],
             ruleValidate: { // 表单校验
                 corpId: [
-                    { required: true, message: '所属企业不能为空', trigger: 'blur' }
+                    { required: true, message: '所属劳务公司不能为空', trigger: 'blur' }
                 ],
-                name: [
-                    { required: true, message: '姓名不能为空', trigger: 'blur' }
+                title: [
+                    { required: true, message: '劳务队名字不能为空', trigger: 'blur' }
                 ],
-                username: [
-                    { required: true, message: '用户名不能为空', trigger: 'blur' }
+                leader: [
+                    { required: true, message: '劳务队长不能为空', trigger: 'blur' }
                 ],
-                password: [
-                    { required: true, message: '密码不能为空', trigger: 'blur' }
-                ],
-                position: [
-                    { required: true, message: '职位不能为空', trigger: 'blur' }
+                leaderTel: [
+                    { required: true, message: '联系电话不能为空', trigger: 'blur' }
                 ]
             },
             modal_loading: true
@@ -75,19 +64,15 @@ export default {
     },
     computed: {
         title () {
-            this.saveForm.password = ''
-            this.ruleValidate.password[0].required = false
             return this.tranData.edit ? `修改${this.tranData.title}` : `添加${this.tranData.title}`
         }
     },
     created () {
         this.getCorpList()
-        this.getPositions()
-       
     },
     methods: {
         getCorpList () {
-            query_corp({status: '已审核'}).then(
+            query_corp({status: '已审核', kind: '劳务公司'}).then(
                 res => {
                     this.corpList = res.rows
                 }
@@ -102,30 +87,6 @@ export default {
                 }
             )
         },
-        getPositions (corpKind = null) {
-            console.log(corpKind)
-            // 加载职位类型选择条件
-            query_dic({key: 'position',desc: corpKind}).then(
-                res => {
-                    this.positions = res.rows
-                }
-            ).catch(
-                err => {
-                    if (err.response.status === 400) {
-                        this.$Message.error(err.response.data.message)
-                    } else {
-                        console.error(`err=${JSON.stringify(err)}`)
-                    }
-                }
-            )
-        },
-        corpChange () {
-            this.saveForm.position=''
-            let corps = this.corpList.filter(item => {
-                return item.id === this.saveForm.corpId 
-            })
-            this.getPositions(corps[0].kind)
-        },
         handleSave () {
             console.warn('save')
             this.$refs['saveForm'].validate((valid) => {
@@ -137,7 +98,7 @@ export default {
                         okText: '确定',
                         cancelText: '取消',
                         onOk: () => {
-                            save_user(this.saveForm).then(
+                            save_laborteam(this.saveForm).then(
                                 res => {
                                     this.$Message.success('保存成功')
                                     this.$emit('success')
@@ -179,16 +140,15 @@ export default {
                 this.$refs['saveForm'].resetFields()
                 this.saveForm = { 
                 corpId: '',
-                name: '',
-                username: '',
-                password: '',
-                position: ''
+                title: '',
+                leader: '',
+                leaderTel: ''
             },
                 console.warn('重置了')
             }
         },
         getObjectById () { // 通过父组件传来的id,获取到该对象
-            get_user(this.tranData.id).then(
+            get_laborteam(this.tranData.id).then(
                 res => {
                     console.warn(`res=${JSON.stringify(res)}`)
                     this.saveForm = res

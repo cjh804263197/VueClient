@@ -4,8 +4,7 @@
             <!-- 查询面板 -->
             <Form ref="formInline" :model="filter" inline>
                 <FormItem prop="key">
-                    <!-- <Input type="text" v-model="filter.corpId" icon="search" placeholder="通过所属企业检索"/> -->
-                    <Select style="width:200px" v-model="filter.corpId" placeholder="通过所属企业检索" clearable>
+                    <Select style="width:200px" v-model="filter.corpId" placeholder="通过所属劳务公司检索" clearable>
                         <Option v-for="item in corpList" :value="item.id" :key="item.id">{{ item.title }}</Option>
                     </Select>
                 </FormItem>
@@ -21,18 +20,18 @@
             <!-- 分页控件 -->
             <Page style="float: right;" :transfer="true" :current.sync="currentPage" :page-size="limit" :total="total" @on-change="currentPageChange" show-total></Page>
         </Row>
-        <crop-user-edit :tranData="tranData" @success="handleQuery"></crop-user-edit>
+        <laborteam-edit :tranData="tranData" @success="handleQuery"></laborteam-edit>
     </div>
 </template>
 
 <script>
-import {destory_user, query_user} from '@/api/corpUser.js'
-import cropUserEdit from './crop-user-edit'
+import {destory_laborteam, query_laborteam} from '@/api/laborteam.js'
+import laborteamEdit from './laborteam-edit'
 import {query_corp} from '@/api/corp.js'
 import Vue from 'vue'
 export default {
     components: {
-        cropUserEdit
+        laborteamEdit
     },
     data () {
         return {
@@ -43,23 +42,23 @@ export default {
             loading: false, // table的加载状态 默认为false
             columns: [ // Table title
                 {
-                    title: '所属企业',
+                    title: '所属劳务公司',
                     key: 'title',
                      render: (h, params) => {
                         return h('div', params.row.Corp.title)
                     }
                 },
                 {
-                    title: '姓名',
-                    key: 'name'
+                    title: '劳务队',
+                    key: 'title'
                 },
                 {
-                    title: '用户名',
-                    key: 'username'
+                    title: '劳务队长',
+                    key: 'leader'
                 },
                 {
-                    title: '职位',
-                    key: 'position'
+                    title: '联系电话',
+                    key: 'leaderTel'
                 },
                 {
                     title: '添加时间',
@@ -118,7 +117,7 @@ export default {
             tranData: { // 向编辑数据模态框传值
                 visible: false, 
                 edit: false, 
-                title: '企业用户', 
+                title: '劳务队', 
                 id: ''
             }
         }
@@ -129,7 +128,7 @@ export default {
     },
     methods: {
         getCorpList () {
-            query_corp({status: '已审核'}).then(
+            query_corp({status: '已审核', kind: '劳务公司'}).then(
                 res => {
                     this.corpList = res.rows
                 }
@@ -163,7 +162,7 @@ export default {
                 okText: '确定',
                 cancelText: '取消',
                 onOk: () => {
-                    destory_user(id).then(
+                    destory_laborteam(id).then(
                         res => {
                             this.$Message.success('删除成功')
                             this.handleQuery()
@@ -180,7 +179,7 @@ export default {
             this.currentPage = current
             this.loading = true
             console.log(this.filter.corpId)
-            query_user({'like%corpId': this.filter.corpId, limit: this.limit, currentPage: this.currentPage}).then(
+            query_laborteam({'like%corpId': this.filter.corpId, limit: this.limit, currentPage: this.currentPage}).then(
                 res => {
                     console.log(res.rows)
                     this.loading = false

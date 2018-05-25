@@ -276,6 +276,19 @@ export const appRouter = [
             { path: 'corp-add', title: '企业添加', name: 'corp-add', icon: 'link', component: () => import('@/views/corp/corp-edit.vue') },
             { path: 'corp-users', title: '企业用户维护', name: 'corp-users', icon: 'link', component: () => import('@/views/corp/corp-users.vue')}
         ]
+    },
+    {
+        path: '/laborteam-manage',
+        icon: 'ios-infinite',
+        name: 'corp-manage',
+        title: '劳务队管理',
+        component: Main,
+        // meta: {
+        //     roles: ['监管人员', '劳务公司经理','劳资员'] // you can set roles in root nav
+        // },
+        children: [
+            { path: 'laborteams', title: '劳务队维护', name: 'laborteams', icon: 'link', component: () => import('@/views/laborteam/laborteam-list.vue')}
+        ]
     }
 ]
 
