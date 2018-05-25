@@ -28,6 +28,7 @@
 import {destory_laborteam, query_laborteam} from '@/api/laborteam.js'
 import laborteamEdit from './laborteam-edit'
 import {query_corp} from '@/api/corp.js'
+import Cookies from 'js-cookie'
 import Vue from 'vue'
 export default {
     components: {
@@ -38,6 +39,7 @@ export default {
             filter: { // 搜索条件
                 corpId: ''
             },
+            currentCorpId: JSON.parse(Cookies.get('user')).corpId,
             corpList: [],
             loading: false, // table的加载状态 默认为false
             columns: [ // Table title
@@ -128,7 +130,8 @@ export default {
     },
     methods: {
         getCorpList () {
-            query_corp({status: '已审核', kind: '劳务公司'}).then(
+            console.log(this.currentCorpId)
+            query_corp({status: '已审核', kind: '劳务公司', id: this.currentCorpId}).then(
                 res => {
                     this.corpList = res.rows
                 }
@@ -178,8 +181,14 @@ export default {
         handleQuery (current = 1) { // 处理查询按钮事件
             this.currentPage = current
             this.loading = true
-            console.log(this.filter.corpId)
-            query_laborteam({'like%corpId': this.filter.corpId, limit: this.limit, currentPage: this.currentPage}).then(
+            let corpId = ''
+            if(this.currentCorpId !== undefined && this.currentCorpId !== null && this.currentCorpId !==''){
+                corpId = this.currentCorpId 
+            }
+            else {
+                corpId = this.filter.corpId
+            }
+            query_laborteam({'like%corpId': corpId, limit: this.limit, currentPage: this.currentPage}).then(
                 res => {
                     console.log(res.rows)
                     this.loading = false
