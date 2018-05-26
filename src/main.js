@@ -13,7 +13,7 @@ Vue.use(VueI18n)
 Vue.use(iView)
 
 Vue.filter('datefmt', date => {
-    return moment(date).format('yyyy-MM-dd')
+    return moment(date).format('YYYY-MM-DD')
 })
 Vue.filter('timefmt', date => {
     return moment(date).format('YYYY-MM-DD HH:mm:ss')

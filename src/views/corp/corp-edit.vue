@@ -18,7 +18,7 @@
             <Input v-model="corpForm.businessLicenceNum" placeholder="请输入营业执照号码"/>
         </FormItem>
         <FormItem label="营业执照照片" prop="businessLicenceImg">
-            <select-img :id="'businessLicenceImg'" :max="1" :uploadedList="typeof(corpForm.businessLicenceImg)=='string'?['http://192.168.0.103:8090/'+corpForm.businessLicenceImg]:[]" @file-list-change="(list) => {corpForm.businessLicenceImg=list.length===0?null:list[0].file}"></select-img>
+            <select-img :id="'businessLicenceImg'" :max="1" :uploadedList="typeof(corpForm.businessLicenceImg)=='string'?[baseUrl+corpForm.businessLicenceImg]:[]" @file-list-change="(list) => {corpForm.businessLicenceImg=list.length===0?null:list[0].file}"></select-img>
         </FormItem>
         <FormItem label="资质类型及号码">
             <Row>
@@ -38,13 +38,13 @@
             </Row>
         </FormItem>
         <FormItem label="资质证书照片" prop="aptitudeCerImg">
-            <select-img :id="'aptitudeCerImg'" :max="1" :uploadedList="typeof(corpForm.aptitudeCerImg)=='string'?['http://192.168.0.103:8090/'+corpForm.aptitudeCerImg]:[]" @file-list-change="(list) => {corpForm.aptitudeCerImg=list.length===0?null:list[0].file}"></select-img>
+            <select-img :id="'aptitudeCerImg'" :max="1" :uploadedList="typeof(corpForm.aptitudeCerImg)=='string'?[baseUrl+corpForm.aptitudeCerImg]:[]" @file-list-change="(list) => {corpForm.aptitudeCerImg=list.length===0?null:list[0].file}"></select-img>
         </FormItem>
         <FormItem label="安全许可证号" prop="safetyCerNum">
             <Input v-model="corpForm.safetyCerNum" placeholder="请输入安全许可证号"/>
         </FormItem>
         <FormItem label="安全许可证照片" prop="safetyCerImg">
-            <select-img :id="'safetyCerImg'" :max="1" :uploadedList="typeof(corpForm.safetyCerImg)=='string'?['http://192.168.0.103:8090/'+corpForm.safetyCerImg]:[]" @file-list-change="(list) => {corpForm.safetyCerImg=list.length===0?null:list[0].file}"></select-img>
+            <select-img :id="'safetyCerImg'" :max="1" :uploadedList="typeof(corpForm.safetyCerImg)=='string'?[baseUrl+corpForm.safetyCerImg]:[]" @file-list-change="(list) => {corpForm.safetyCerImg=list.length===0?null:list[0].file}"></select-img>
         </FormItem>
         <FormItem label="批准及生效日期">
             <Row>
@@ -63,13 +63,12 @@
         </FormItem>
         <FormItem label="法人姓名及电话">
             <Row>
-                <Col span="11">
+                <Col span="12">
                     <FormItem prop="corporater">
                         <Input v-model="corpForm.corporater" placeholder="请输入法人姓名"/>
                     </FormItem>
                 </Col>
-                <Col span="2" style="text-align: center"></Col>
-                <Col span="11">
+                <Col span="12">
                     <FormItem prop="corporateTel">
                         <Input v-model="corpForm.corporateTel" placeholder="请输入法人电话"/>
                     </FormItem>
@@ -78,13 +77,12 @@
         </FormItem>
         <FormItem label="联系人姓名及电话">
             <Row>
-                <Col span="11">
+                <Col span="12">
                     <FormItem prop="contactor">
                         <Input v-model="corpForm.contactor" placeholder="请输入公司联系人姓名"/>
                     </FormItem>
                 </Col>
-                <Col span="2" style="text-align: center"></Col>
-                <Col span="11">
+                <Col span="12">
                     <FormItem prop="contactTel">
                         <Input v-model="corpForm.contactTel" placeholder="请输入公司联系人电话"/>
                     </FormItem>
@@ -95,8 +93,8 @@
             <Input v-model="corpForm.email" placeholder="请输入企业邮箱"/>
         </FormItem>
         <FormItem>
-            <Button type="primary" @click="handleSubmit('corpForm')">Submit</Button>
-            <Button type="ghost" @click="handleReset('corpForm')" style="margin-left: 8px">Reset</Button>
+            <Button type="primary" @click="handleSubmit('corpForm')">提交</Button>
+            <Button type="ghost" @click="handleReset('corpForm')" style="margin-left: 8px">重置</Button>
         </FormItem>
     </Form>
 </template>
@@ -105,6 +103,7 @@
 import selectImg from './components/select-img'
 import { query_dic } from '@/api/dictionary.js'
 import { save_corp, get_corp } from '../../api/corp.js'
+import baseUrl from '@/api/url.js'
 export default {
     components: {
         selectImg
@@ -114,7 +113,7 @@ export default {
             event.returnValue = "表单内容尚未保存，是否要离开？"
         })
         if (this.$route.params.id) { // 当路由参数中id为undefine,则为添加，否则为修改
-            get_corp('6e3dff89-6288-406b-856b-12582bbfa1f0').then(
+            get_corp(this.$route.params.id).then(
                 res => {
                     console.warn(`res.status=${JSON.stringify(res)}`)
                     this.corpForm = res
@@ -232,7 +231,8 @@ export default {
                 ]
             },
             corpKinds: [],
-            aptitudeKinds: []
+            aptitudeKinds: [],
+            baseUrl: baseUrl
         }
     },
     methods: {
@@ -249,13 +249,16 @@ export default {
                 if (valid) {
                     this.$Modal.confirm({
                         title: '提示',
-                        content: '<p>确定要保存该条企业信息吗？</p>',
+                        content: '<p>确定要提交该条企业信息吗？</p>',
                         okText: '确定',
                         cancelText: '取消',
                         onOk: () => {
                             save_corp(this.corpForm).then(
                                 res => {
                                     this.$Message.success('保存成功')
+                                    this.$router.push({
+                                        name: 'corp-list'
+                                    })
                                 }
                             ).catch(
                                 err => {

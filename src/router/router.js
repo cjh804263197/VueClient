@@ -274,6 +274,7 @@ export const appRouter = [
         component: Main,
         children: [
             { path: 'corp-add', title: '企业添加', name: 'corp-add', icon: 'link', component: () => import('@/views/corp/corp-edit.vue') },
+            { path: 'corp-list', title: '企业查询', name: 'corp-list', icon: 'link', component: () => import('@/views/corp/corp-list.vue') },
             { path: 'corp-users', title: '企业用户维护', name: 'corp-users', icon: 'link', component: () => import('@/views/corp/corp-users.vue')}
         ]
     },
@@ -288,6 +289,17 @@ export const appRouter = [
         // },
         children: [
             { path: 'laborteams', title: '劳务队维护', name: 'laborteams', icon: 'link', component: () => import('@/views/laborteam/laborteam-list.vue')}
+        ]
+    },
+    {
+        path: '/project-manage',
+        icon: 'ios-infinite',
+        name: 'project-manage',
+        title: '项目管理',
+        component: Main,
+        children: [
+            { path: 'project-add', title: '创建项目', name: 'project-add', icon: 'link', component: () => import('@/views/project/project-edit.vue') },
+            { path: 'project-list', title: '项目查询', name: 'project-list', icon: 'link', component: () => import('@/views/project/project-list.vue') }
         ]
     }
 ]

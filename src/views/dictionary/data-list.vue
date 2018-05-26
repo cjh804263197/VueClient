@@ -7,8 +7,8 @@
                     <Input type="text" v-model="filter.key" icon="search" placeholder="通过Key检索"/>
                 </FormItem>
                 <FormItem>
-                    <Button type="primary" @click="handleQuery()">查询</Button>
-                    <Button type="success" @click="handleAdd()">添加</Button>
+                    <Button type="primary" icon="ios-search-strong" @click="handleQuery()">查询</Button>
+                    <Button type="success" icon="ios-plus" @click="handleAdd()">添加</Button>
                 </FormItem>
             </Form>
         </Row>
@@ -68,13 +68,14 @@ export default {
                     title: '操作',
                     key: 'action',
                     fixed: 'right',
-                    width: 150,
+                    width: 160,
                     render: (h, params) => {
                         return h('div', [
                             h('Button', {
                                 props: {
                                     type: 'warning',
-                                    size: 'small'
+                                    size: 'small',
+                                    icon: 'ios-compose'
                                 },
                                 style: {
                                     marginRight: '5px'
@@ -88,7 +89,8 @@ export default {
                             h('Button', {
                                 props: {
                                     type: 'error',
-                                    size: 'small'
+                                    size: 'small',
+                                    icon: 'ios-trash'
                                 },
                                 on: {
                                     click: () => {
@@ -96,7 +98,7 @@ export default {
                                     }
                                 }
                             }, '删除')
-                        ]);
+                        ])
                     }
                 }
             ],

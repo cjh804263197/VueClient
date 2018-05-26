@@ -6,24 +6,23 @@
                 <FormItem prop="title">
                     <Input type="text" v-model="filter.title" icon="search" clearable placeholder="通过企业名称检索"/>
                 </FormItem>
-                <FormItem prop="kind">
-                    <Select v-model="filter.kind" placeholder="企业类型筛选" clearable>
-                        <Option v-for="item in corpKinds" :value="item.value" :key="item.value">{{ item.value }}</Option>
+                <FormItem prop="buildCorp">
+                    <Select v-model="filter.buildCorpId" placeholder="建设单位筛选">
+                        <Option v-for="item in buildCorps" :value="item.id" :disabled="filter.buildCorpId !== '' && item.id !== filter.buildCorpId" :key="item.id">{{ item.title }}</Option>
                     </Select>
                 </FormItem>
-                <FormItem prop="aptitude">
-                    <Select v-model="filter.aptitude" placeholder="资质类型筛选" clearable>
-                        <Option v-for="item in aptitudeKinds" :value="item.value" :key="item.value">{{ item.value }}</Option>
+                <FormItem prop="constructCorp">
+                    <Select v-model="filter.constructCorpId" placeholder="施工总承包单位筛选">
+                        <Option v-for="item in constructCorps" :value="item.id" :disabled="filter.constructCorpId !== '' && item.id !== filter.constructCorpId" :key="item.id">{{ item.title }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem prop="status">
-                    <Select v-model="filter.status" placeholder="企业状态筛选" clearable>
-                        <Option v-for="item in corpStatus" :value="item.value" :key="item.value">{{ item.value }}</Option>
+                    <Select v-model="filter.status" placeholder="项目状态筛选" clearable>
+                        <Option v-for="item in projectStatus" :value="item.value" :key="item.value">{{ item.value }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem>
                     <Button type="primary" icon="ios-search-strong" @click="handleQuery()">查询</Button>
-                    <Button type="success" icon="ios-plus" @click="handleAdd()">添加</Button>
                 </FormItem>
             </Form>
         </Row>
@@ -39,26 +38,29 @@
 </template>
 
 <script>
-import { query_corp, destory_corp, save_corp } from '@/api/corp.js'
+import { query_corp } from '@/api/corp.js'
+import { save_project, destory_project, query_project } from '@/api/project.js'
 import { query_dic } from '@/api/dictionary.js'
 import Vue from 'vue'
 import expandRow from './components/table-expand'
+import Cookies from 'js-cookie'
 export default {
     components: {
         expandRow
     },
     data () {
         return {
+            loginUser: JSON.parse(Cookies.get('user')),
             loading: false,
             filter: { // 查询条件
-                title: '', // 企业名称
-                status: '', // 企业状态
-                kind: '', // 企业类型
-                aptitude: '' // 资质类型
+                title: '', // 项目名称
+                buildCorpId: JSON.parse(Cookies.get('user')).position === '建设单位主管' ? JSON.parse(Cookies.get('user')).corpId : '', // 建设单位
+                constructCorpId: JSON.parse(Cookies.get('user')).position === '项目经理' ? JSON.parse(Cookies.get('user')).corpId : '', // 施工总承包单位
+                status: '' // 项目状态
             },
-            corpKinds: [],
-            aptitudeKinds: [],
-            corpStatus:[],
+            buildCorps: [],
+            constructCorps: [],
+            projectStatus:[],
             datas: [], //存放查询结果数据
             total: 0, // 查询总记录数
             currentPage: 1, // 当前页
@@ -76,33 +78,39 @@ export default {
                     }
                 },
                 {
-                    title: '企业名称',
+                    title: '项目名称',
                     key: 'title'
                 },
                 {
-                    title: '企业类型',
-                    key: 'kind'
-                },
-                {
-                    title: '企业状态',
-                    key: 'status'
-                },
-                {
-                    title: '资质类型',
-                    key: 'aptitudeKind'
-                },
-                {
-                    title: '批准日期',
-                    key: 'approveDate',
+                    title: '建设单位',
+                    key: 'BuildCorp',
                     render: (h, params) => {
-                        return h('div', Vue.filter('datefmt')(params.row.approveDate))
+                        return h('div', params.row.BuildCorps.title)
                     }
                 },
                 {
-                    title: '生效日期',
-                    key: 'effectiveDate',
+                    title: '施工总承包单位',
+                    key: 'ConstructCorp',
                     render: (h, params) => {
-                        return h('div', Vue.filter('datefmt')(params.row.effectiveDate))
+                        return h('div', params.row.ConstructCorps.title)
+                    }
+                },
+                {
+                    title: '项目状态',
+                    key: 'status'
+                },
+                {
+                    title: '开工日期',
+                    key: 'startDate',
+                    render: (h, params) => {
+                        return h('div', Vue.filter('datefmt')(params.row.startDate))
+                    }
+                },
+                {
+                    title: '竣工日期',
+                    key: 'completeDate',
+                    render: (h, params) => {
+                        return h('div', Vue.filter('datefmt')(params.row.completeDate))
                     }
                 },
                 {
@@ -125,10 +133,9 @@ export default {
                     fixed: 'right',
                     width: 220,
                     render: (h, params) => {
-                        if (params.row.status === '未审核') { // 若为已审核状态，则只提供修改按钮
-                            return h('div', [
-                                h('Button', {
-                                    props: {
+                        if (params.row.status === '未审核') { // 若为未审核状态
+                            if (this.loginUser.position === '监管人员') { // 监管人员可以审核
+                                return h('Button', { props: {
                                         type: 'info',
                                         size: 'small',
                                         icon: 'ios-checkmark'
@@ -141,37 +148,59 @@ export default {
                                             this.handleAudit(params.row.id)
                                         }
                                     }
-                                }, '审核'),
-                                h('Button', {
-                                    props: {
-                                        type: 'warning',
+                                }, '审核')
+                            } else if (this.loginUser.position === '建设单位主管') { // 建设单位主管可以进行修改及删除
+                                return h('div', [
+                                    h('Button', {
+                                        props: {
+                                            type: 'warning',
+                                            size: 'small',
+                                            icon: 'ios-compose'
+                                        },
+                                        style: {
+                                            marginRight: '5px'
+                                        },
+                                        on: {
+                                            click: () => {
+                                                this.handleEdit(params.row.id)
+                                            }
+                                        }
+                                    }, '修改'),
+                                    h('Button', {
+                                        props: {
+                                            type: 'error',
+                                            size: 'small',
+                                            icon: 'ios-trash'
+                                        },
+                                        on: {
+                                            click: () => {
+                                                this.handleDelete(params.row.id)
+                                            }
+                                        }
+                                    }, '删除')
+                                ])
+                            } else { // 其他人员什么都不能做
+                                return h('div')
+                            }
+                        } else { // 若状态为已审核
+                            if (this.loginUser.position === '建设单位主管' || this.loginUser.position === '项目经理') {
+                                return h('Button', { props: {
+                                        type: 'info',
                                         size: 'small',
-                                        icon: 'ios-compose'
+                                        icon: 'ios-checkmark'
                                     },
                                     style: {
                                         marginRight: '5px'
                                     },
                                     on: {
                                         click: () => {
-                                            this.handleEdit(params.row.id)
+                                            this.handleLaborTeamRela(params.row.id)
                                         }
                                     }
-                                }, '修改'),
-                                h('Button', {
-                                    props: {
-                                        type: 'error',
-                                        size: 'small',
-                                        icon: 'ios-trash'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.handleDelete(params.row.id)
-                                        }
-                                    }
-                                }, '删除')
-                            ])
-                        } else {
-                            return h('div')
+                                }, '劳务关系')
+                            } else { // 其他人员什么都不能做
+                                return h('div')
+                            }
                         }
                         
                     }
@@ -180,10 +209,10 @@ export default {
         }
     },
     created () { // 生命周期create钩子函数
-        // 加载企业类型选择条件
-        query_dic({key: 'CorpKind'}).then(
+        // 加载项目状态选择条件
+        query_dic({key: 'CorpStatus'}).then(
             res => {
-                this.corpKinds = res.rows
+                this.projectStatus = res.rows
             }
         ).catch(
             err => {
@@ -195,9 +224,9 @@ export default {
             }
         )
         // 加载资质类型选择条件
-        query_dic({key: 'AptitudeKind'}).then(
+        query_corp({kind: '建设单位', status: '已审核'}).then(
             res => {
-                this.aptitudeKinds = res.rows
+                this.buildCorps = res.rows
             }
         ).catch(
             err => {
@@ -209,9 +238,9 @@ export default {
             }
         )
         // 加载企业状态选择条件
-        query_dic({key: 'CorpStatus'}).then(
+        query_corp({kind: '施工总承包单位', status: '已审核'}).then(
             res => {
-                this.corpStatus = res.rows
+                this.constructCorps = res.rows
             }
         ).catch(
             err => {
@@ -226,19 +255,14 @@ export default {
         this.handleQuery()
     },
     methods: {
-        handleAdd () { // 处理添加按钮事件
-            this.$router.push({
-                name: 'corp-add'
-            })
-        },
         handleAudit (id) { // 处理审核按钮事件
             this.$Modal.confirm({
                 title: '提示',
-                content: '<p>确定要审核该条企业信息吗？</p>',
+                content: '<p>确定要审核该条项目信息吗？</p>',
                 okText: '确定',
                 cancelText: '取消',
                 onOk: () => {
-                    save_corp({id, status: '已审核'}).then(
+                    save_project({id, status: '已审核'}).then(
                         res => {
                             this.$Message.success('审核成功')
                             this.handleQuery()
@@ -259,7 +283,7 @@ export default {
         handleEdit (id) { // 处理编辑按钮事件
             console.warn(`handleEdit${id}`)
             this.$router.push({
-                name: 'corp-add',
+                name: 'project-add',
                 params: {id}
             })
         },
@@ -271,7 +295,7 @@ export default {
                 okText: '确定',
                 cancelText: '取消',
                 onOk: () => {
-                    destory_corp(id).then(
+                    destory_project(id).then(
                         res => {
                             this.$Message.success('删除成功')
                             this.handleQuery()
@@ -284,10 +308,13 @@ export default {
                 }
             })
         },
+        handleLaborTeamRela (id) { // 查看劳务关系
+            console.warn(`handleLaborTeamRela${id}`)
+        },
         handleQuery (current = 1) { // 处理查询按钮事件
             this.currentPage = current
             this.loading = true
-            query_corp({'like%title': this.filter.title, kind: this.filter.kind, status: this.filter.status, aptitudeKind: this.filter.aptitude, limit: this.limit, currentPage: this.currentPage}).then(
+            query_project({'like%title': this.filter.title, buildCorpId: this.filter.buildCorpId, constructCorpId: this.filter.constructCorpId, status: this.filter.status, limit: this.limit, currentPage: this.currentPage}).then(
                 res => {
                     this.loading = false
                     this.total = res.count
