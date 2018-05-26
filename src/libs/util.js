@@ -2,6 +2,7 @@ import axios from 'axios'
 import env from '../../build/env'
 import semver from 'semver'
 import packjson from '../../package.json'
+import crypto from 'crypto'
 
 let util = {
 
@@ -249,6 +250,12 @@ util.fullscreenEvent = function (vm) {
     // 权限菜单过滤相关
     vm.$store.commit('updateMenulist')
     // 全屏相关
+}
+util.md5 = function (value) {
+    console.log(1)
+    let md5 = crypto.createHash('md5')
+    md5.update(value)
+    return md5.digest('hex')
 }
 
 export default util

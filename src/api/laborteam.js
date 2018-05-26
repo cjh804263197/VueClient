@@ -1,26 +1,23 @@
 
 import request from './request'
-import { filetrParams } from './util'
+
 /**
- * 保存企业（包含添加和修改）
- * @param {*} param 参数
+ * 劳务队添加
+ * @param {*} param 参数 劳务队对象
  */
-let save_corp = async (param) => {
+let save_laborteam = async (param) => {
+    // 首先删除参数中的添加和修改时间，防止在修改的时候这两个字段被修改
     delete param.createdAt
     delete param.updatedAt
-    let data = new FormData()
-    for (let key in param) {
-        data.append(key, param[key])
-    }
+    
+    console.warn(`data=${JSON.stringify(param)}`)
     let res = null
     await request({
-        url: '/corp/save',
-        headers: {'Content-Type': 'multipart/form-data'},
+        url: '/laborteam/save',
         method: 'post',
-        data
+        data: param
     }).then(
         response => {
-            console.log(`res=${JSON.stringify(response)}`)
             res = response.data
         }
     ).catch(
@@ -30,17 +27,18 @@ let save_corp = async (param) => {
     )
     return res
 }
+
 /**
- * 删除企业
+ * 删除劳务队
  * @param {*} id ID
  */
-let destory_corp = async (id) => {
+let destory_laborteam = async (id) => {
     let data = {
         id
     }
     let res = null
     await request({
-        url: '/corp/destory',
+        url: '/laborteam/destory',
         method: 'post',
         data
     }).then(
@@ -55,20 +53,20 @@ let destory_corp = async (id) => {
     return res
 }
 /**
- * 获取企业
+ * 获取单个用户
  */
-let get_corp = async (id) => {
+let get_laborteam = async (id) => {
     let data = {
         id
     }
+    console.warn(`data=${JSON.stringify(data)}`)
     let res = null
     await request({
-        url: '/corp/get',
+        url: '/laborteam/get',
         method: 'post',
         data
     }).then(
         response => {
-            console.log(`res=${JSON.stringify(response)}`)
             res = response.data
         }
     ).catch(
@@ -79,18 +77,11 @@ let get_corp = async (id) => {
     return res
 }
 
-
-/**
- * 查询企业列表
- * @param {*} param 查询参数
- */
-let query_corp = async (param) => {
+let query_laborteam = async (param) => {
+    console.warn(`param=${JSON.stringify(param)}`)
     let res = null
-    console.warn(param)
-    param = filetrParams(param)
-    console.warn(param)
     await request({
-        url: '/corp/query',
+        url: '/laborteam/query',
         method: 'post',
         data: param
     }).then(
@@ -106,8 +97,8 @@ let query_corp = async (param) => {
 }
 
 module.exports = {
-    get_corp,
-    save_corp,
-    query_corp,
-    destory_corp
+    save_laborteam,
+    destory_laborteam,
+    get_laborteam,
+    query_laborteam
 }
