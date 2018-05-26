@@ -249,7 +249,7 @@ export default {
                 if (valid) {
                     this.$Modal.confirm({
                         title: '提示',
-                        content: '<p>确定要保存该条企业信息吗？</p>',
+                        content: '<p>确定要提交该条企业信息吗？</p>',
                         okText: '确定',
                         cancelText: '取消',
                         onOk: () => {
