@@ -9,8 +9,8 @@
                     </Select>
                 </FormItem>
                 <FormItem>
-                    <Button type="primary" @click="handleQuery()">查询</Button>
-                    <Button type="success" @click="handleAdd()">添加</Button>
+                    <Button type="primary" @click="handleQuery">查询</Button>
+                    <Button type="success" @click="handleAdd">添加</Button>
                 </FormItem>
             </Form>
         </Row>

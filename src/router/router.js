@@ -302,6 +302,16 @@ export const appRouter = [
             { path: 'project-list', title: '项目查询', name: 'project-list', icon: 'link', component: () => import('@/views/project/project-list.vue') },
             { path: 'project-laborteam-list', title: '分配关系管理', name: 'project-laborteam-list', icon: 'link', component: () => import('@/views/project/project-laborteam-list.vue') }
         ]
+    },
+    {
+        path: '/salary-manage',
+        icon: 'ios-infinite',
+        name: 'salary-manage',
+        title: '工资管理',
+        component: Main,
+        children: [
+            { path: 'salary-add', title: '工资录入', name: 'salary-add', icon: 'link', component: () => import('@/views/salary/salary-add.vue') }
+        ]
     }
 ]
 
