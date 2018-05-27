@@ -46,7 +46,7 @@ export default {
                 {
                     title: '所属劳务公司',
                     key: 'title',
-                     render: (h, params) => {
+                    render: (h, params) => {
                         return h('div', params.row.Corp.title)
                     }
                 },
@@ -112,14 +112,14 @@ export default {
                     }
                 }
             ],
-            datas: [], //存放查询结果数据
+            datas: [], // 存放查询结果数据
             total: 0, // 查询总记录数
             currentPage: 1, // 当前页
             limit: 10, // 页大小
             tranData: { // 向编辑数据模态框传值
-                visible: false, 
-                edit: false, 
-                title: '劳务队', 
+                visible: false,
+                edit: false,
+                title: '劳务队',
                 id: ''
             }
         }
@@ -182,10 +182,9 @@ export default {
             this.currentPage = current
             this.loading = true
             let corpId = ''
-            if(this.currentCorpId !== undefined && this.currentCorpId !== null && this.currentCorpId !==''){
-                corpId = this.currentCorpId 
-            }
-            else {
+            if (this.currentCorpId !== undefined && this.currentCorpId !== null && this.currentCorpId !== '') {
+                corpId = this.currentCorpId
+            } else {
                 corpId = this.filter.corpId
             }
             query_laborteam({'like%corpId': corpId, limit: this.limit, currentPage: this.currentPage}).then(

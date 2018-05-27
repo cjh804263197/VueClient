@@ -102,14 +102,14 @@ export default {
                     }
                 }
             ],
-            datas: [], //存放查询结果数据
+            datas: [], // 存放查询结果数据
             total: 0, // 查询总记录数
             currentPage: 1, // 当前页
             limit: 10, // 页大小
             tranData: { // 向编辑数据模态框传值
-                visible: false, 
-                edit: false, 
-                title: '数据字典', 
+                visible: false,
+                edit: false,
+                title: '数据字典',
                 id: ''
             }
         }

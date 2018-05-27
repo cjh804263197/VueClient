@@ -45,7 +45,7 @@
 
 <script>
 import Cookies from 'js-cookie'
-import {corp_user_login} from '@/api/login'
+import {login} from '@/api/login'
 import {get_corp} from '@/api/corp'
 export default {
     data () {
@@ -80,7 +80,7 @@ export default {
                     // this.$router.push({
                     //     name: 'home_index'
                     // });
-                    corp_user_login(this.form.username, this.form.password).then(
+                    login(this.form.username, this.form.password, this.loginRole === '监管用户' ? '/supervise/user/login' : '/corp/user/login').then(
                         res => {
                             console.warn(`res.status=${JSON.stringify(res)}`)
                             Cookies.set('user', JSON.stringify(res.user))

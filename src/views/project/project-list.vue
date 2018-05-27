@@ -4,20 +4,20 @@
             <!-- 查询面板 -->
             <Form ref="formInline" :model="filter" inline>
                 <FormItem prop="title">
-                    <Input type="text" v-model="filter.title" icon="search" clearable placeholder="通过企业名称检索"/>
+                    <Input type="text" v-model="filter.title" icon="search" clearable placeholder="通过项目名称检索"/>
                 </FormItem>
                 <FormItem prop="buildCorp">
-                    <Select v-model="filter.buildCorpId" placeholder="建设单位筛选">
-                        <Option v-for="item in buildCorps" :value="item.id" :disabled="filter.buildCorpId !== '' && item.id !== filter.buildCorpId" :key="item.id">{{ item.title }}</Option>
+                    <Select v-model="filter.buildCorpId" :clearable="buildCorpClearable" placeholder="建设单位筛选" style="width: 200px;">
+                        <Option v-for="item in buildCorps" :value="item.id" :disabled="buildCorpId !== '' && item.id !== buildCorpId" :key="item.id">{{ item.title }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem prop="constructCorp">
-                    <Select v-model="filter.constructCorpId" placeholder="施工总承包单位筛选">
-                        <Option v-for="item in constructCorps" :value="item.id" :disabled="filter.constructCorpId !== '' && item.id !== filter.constructCorpId" :key="item.id">{{ item.title }}</Option>
+                    <Select v-model="filter.constructCorpId" :clearable="constructCorpClearable" placeholder="施工总承包单位筛选" style="width: 200px;">
+                        <Option v-for="item in constructCorps" :value="item.id" :disabled="constructCorpId !== '' && item.id !== constructCorpId" :key="item.id">{{ item.title }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem prop="status">
-                    <Select v-model="filter.status" placeholder="项目状态筛选" clearable>
+                    <Select v-model="filter.status" placeholder="项目状态筛选" clearable style="width: 120px;">
                         <Option v-for="item in projectStatus" :value="item.value" :key="item.value">{{ item.value }}</Option>
                     </Select>
                 </FormItem>
@@ -60,8 +60,8 @@ export default {
             },
             buildCorps: [],
             constructCorps: [],
-            projectStatus:[],
-            datas: [], //存放查询结果数据
+            projectStatus: [],
+            datas: [], // 存放查询结果数据
             total: 0, // 查询总记录数
             currentPage: 1, // 当前页
             limit: 10, // 页大小
@@ -136,18 +136,18 @@ export default {
                         if (params.row.status === '未审核') { // 若为未审核状态
                             if (this.loginUser.position === '监管人员') { // 监管人员可以审核
                                 return h('Button', { props: {
-                                        type: 'info',
-                                        size: 'small',
-                                        icon: 'ios-checkmark'
-                                    },
-                                    style: {
-                                        marginRight: '5px'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.handleAudit(params.row.id)
-                                        }
+                                    type: 'info',
+                                    size: 'small',
+                                    icon: 'ios-checkmark'
+                                },
+                                style: {
+                                    marginRight: '5px'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.handleAudit(params.row.id)
                                     }
+                                }
                                 }, '审核')
                             } else if (this.loginUser.position === '建设单位主管') { // 建设单位主管可以进行修改及删除
                                 return h('div', [
@@ -185,18 +185,18 @@ export default {
                         } else { // 若状态为已审核
                             if (this.loginUser.position === '建设单位主管' || this.loginUser.position === '项目经理') {
                                 return h('Button', { props: {
-                                        type: 'info',
-                                        size: 'small',
-                                        icon: 'ios-checkmark'
-                                    },
-                                    style: {
-                                        marginRight: '5px'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.handleLaborTeamRela(params.row.id)
-                                        }
+                                    type: 'info',
+                                    size: 'small',
+                                    icon: 'ios-checkmark'
+                                },
+                                style: {
+                                    marginRight: '5px'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.handleLaborTeamRela(params.row.id)
                                     }
+                                }
                                 }, '劳务关系')
                             } else { // 其他人员什么都不能做
                                 return h('div')
@@ -206,6 +206,20 @@ export default {
                     }
                 }
             ]
+        }
+    },
+    computed: {
+        buildCorpId () {
+            return JSON.parse(Cookies.get('user')).position === '建设单位主管' ? JSON.parse(Cookies.get('user')).corpId : ''
+        },
+        constructCorpId () {
+            return JSON.parse(Cookies.get('user')).position === '项目经理' ? JSON.parse(Cookies.get('user')).corpId : ''
+        },
+        buildCorpClearable () {
+            return this.buildCorpId === ''
+        },
+        constructCorpClearable () {
+            return this.constructCorpId === ''
         }
     },
     created () { // 生命周期create钩子函数

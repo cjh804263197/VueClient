@@ -17,7 +17,7 @@
                 <Input type="password" v-model="saveForm.password" placeholder="请输入密码"/>
             </FormItem>
              <FormItem label="职位" prop="position">
-                <Select v-model="saveForm.position" placeholder="请选择职位" clearable on-change>
+                <Select v-model="saveForm.position" placeholder="请选择职位" clearable>
                     <Option v-for="item in positions" :value="item.value" :key="item.value">{{ item.value }}</Option>
                 </Select>
             </FormItem>
@@ -83,7 +83,6 @@ export default {
     created () {
         this.getCorpList()
         this.getPositions()
-       
     },
     methods: {
         getCorpList () {
@@ -105,7 +104,7 @@ export default {
         getPositions (corpKind = null) {
             console.log(corpKind)
             // 加载职位类型选择条件
-            query_dic({key: 'position',desc: corpKind}).then(
+            query_dic({key: 'position', desc: corpKind}).then(
                 res => {
                     this.positions = res.rows
                 }
@@ -120,9 +119,9 @@ export default {
             )
         },
         corpChange () {
-            this.saveForm.position=''
+            // this.saveForm.position = ''
             let corps = this.corpList.filter(item => {
-                return item.id === this.saveForm.corpId 
+                return item.id === this.saveForm.corpId
             })
             this.getPositions(corps[0].kind)
         },
@@ -170,20 +169,20 @@ export default {
             this.$refs['saveForm'].resetFields()
         },
         visibleChange (visible) {
-            console.warn(visible?'显示了':'隐藏了')
+            console.warn(visible ? '显示了' : '隐藏了')
             if (visible) { // 当模态框显示时
                 if (this.tranData.edit) { // 当父组件传来编辑是true时，表明将要修改，则需获取到该编辑对象
                     this.getObjectById()
                 }
             } else { // 当模态框关闭时,重置表单
                 this.$refs['saveForm'].resetFields()
-                this.saveForm = { 
-                corpId: '',
-                name: '',
-                username: '',
-                password: '',
-                position: ''
-            },
+                this.saveForm = {
+                    corpId: '',
+                    name: '',
+                    username: '',
+                    password: '',
+                    position: ''
+                }
                 console.warn('重置了')
             }
         },
@@ -193,7 +192,7 @@ export default {
                     console.warn(`res=${JSON.stringify(res)}`)
                     this.saveForm = res
                 }
-            ).catch (
+            ).catch(
                 err => {
                     if (err.response.status === 400) {
                         this.$Message.error(err.response.data.message)

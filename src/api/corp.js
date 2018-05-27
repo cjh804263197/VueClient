@@ -79,7 +79,6 @@ let get_corp = async (id) => {
     return res
 }
 
-
 /**
  * 查询企业列表
  * @param {*} param 查询参数
