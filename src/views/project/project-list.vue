@@ -4,16 +4,16 @@
             <!-- 查询面板 -->
             <Form ref="formInline" :model="filter" inline>
                 <FormItem prop="title">
-                    <Input type="text" v-model="filter.title" icon="search" clearable placeholder="通过企业名称检索"/>
+                    <Input type="text" v-model="filter.title" icon="search" clearable placeholder="通过项目名称检索"/>
                 </FormItem>
                 <FormItem prop="buildCorp">
-                    <Select v-model="filter.buildCorpId" placeholder="建设单位筛选">
-                        <Option v-for="item in buildCorps" :value="item.id" :disabled="filter.buildCorpId !== '' && item.id !== filter.buildCorpId" :key="item.id">{{ item.title }}</Option>
+                    <Select v-model="filter.buildCorpId" :clearable="buildCorpClearable" placeholder="建设单位筛选">
+                        <Option v-for="item in buildCorps" :value="item.id" :disabled="buildCorpId !== '' && item.id !== buildCorpId" :key="item.id">{{ item.title }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem prop="constructCorp">
-                    <Select v-model="filter.constructCorpId" placeholder="施工总承包单位筛选">
-                        <Option v-for="item in constructCorps" :value="item.id" :disabled="filter.constructCorpId !== '' && item.id !== filter.constructCorpId" :key="item.id">{{ item.title }}</Option>
+                    <Select v-model="filter.constructCorpId" :clearable="constructCorpClearable" placeholder="施工总承包单位筛选">
+                        <Option v-for="item in constructCorps" :value="item.id" :disabled="constructCorpId !== '' && item.id !== constructCorpId" :key="item.id">{{ item.title }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem prop="status">
@@ -206,6 +206,20 @@ export default {
                     }
                 }
             ]
+        }
+    },
+    computed: {
+        buildCorpId () {
+            return JSON.parse(Cookies.get('user')).position === '建设单位主管' ? JSON.parse(Cookies.get('user')).corpId : ''
+        },
+        constructCorpId () {
+            return JSON.parse(Cookies.get('user')).position === '项目经理' ? JSON.parse(Cookies.get('user')).corpId : ''
+        },
+        buildCorpClearable () {
+            return this.buildCorpId === ''
+        },
+        constructCorpClearable () {
+            return this.constructCorpId === ''
         }
     },
     created () { // 生命周期create钩子函数

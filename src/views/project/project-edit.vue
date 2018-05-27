@@ -190,9 +190,10 @@ export default {
                             save_project(this.projectForm).then(
                                 res => {
                                     this.$Message.success('保存成功')
-                                    // this.$router.push({
-                                    //     name: 'corp-list'
-                                    // })
+                                    this.$refs[name].resetFields()
+                                    this.$router.push({
+                                        name: 'project-list'
+                                    })
                                 }
                             ).catch(
                                 err => {

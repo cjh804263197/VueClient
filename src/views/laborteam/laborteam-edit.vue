@@ -39,7 +39,7 @@ export default {
             corpList: [],
             ruleValidate: { // 表单校验
                 corpId: [
-                    { required: true, message: '所属劳务公司不能为空', trigger: 'blur' }
+                    { required: true, message: '所属劳务公司不能为空', trigger: 'change' }
                 ],
                 title: [
                     { required: true, message: '劳务队名字不能为空', trigger: 'blur' }

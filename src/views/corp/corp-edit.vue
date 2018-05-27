@@ -256,6 +256,7 @@ export default {
                             save_corp(this.corpForm).then(
                                 res => {
                                     this.$Message.success('保存成功')
+                                    this.$refs[name].resetFields()
                                     this.$router.push({
                                         name: 'corp-list'
                                     })
