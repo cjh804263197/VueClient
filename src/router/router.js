@@ -275,20 +275,20 @@ export const appRouter = [
         children: [
             { path: 'corp-add', title: '企业添加', name: 'corp-add', icon: 'link', component: () => import('@/views/corp/corp-edit.vue') },
             { path: 'corp-list', title: '企业查询', name: 'corp-list', icon: 'link', component: () => import('@/views/corp/corp-list.vue') },
-            { path: 'corp-users', title: '企业用户维护', name: 'corp-users', icon: 'link', component: () => import('@/views/corp/corp-users.vue')}
+            { path: 'corp-users', title: '用户管理', name: 'corp-users', icon: 'link', component: () => import('@/views/corp/corp-users.vue')}
         ]
     },
     {
         path: '/laborteam-manage',
         icon: 'ios-infinite',
         name: 'corp-manage',
-        title: '劳务队管理',
+        title: '劳务管理',
         component: Main,
         // meta: {
         //     roles: ['监管人员', '劳务公司经理','劳资员'] // you can set roles in root nav
         // },
         children: [
-            { path: 'laborteams', title: '劳务队维护', name: 'laborteams', icon: 'link', component: () => import('@/views/laborteam/laborteam-list.vue')}
+            { path: 'laborteams', title: '劳务队管理', name: 'laborteams', icon: 'link', component: () => import('@/views/laborteam/laborteam-list.vue')}
         ]
     },
     {
@@ -299,7 +299,8 @@ export const appRouter = [
         component: Main,
         children: [
             { path: 'project-add', title: '创建项目', name: 'project-add', icon: 'link', component: () => import('@/views/project/project-edit.vue') },
-            { path: 'project-list', title: '项目查询', name: 'project-list', icon: 'link', component: () => import('@/views/project/project-list.vue') }
+            { path: 'project-list', title: '项目查询', name: 'project-list', icon: 'link', component: () => import('@/views/project/project-list.vue') },
+            { path: 'project-laborteam-list', title: '分配关系管理', name: 'project-laborteam-list', icon: 'link', component: () => import('@/views/project/project-laborteam-list.vue') }
         ]
     }
 ]

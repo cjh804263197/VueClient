@@ -9,40 +9,17 @@ let md5 = (value) => {
 }
 /**
  * 企业用户登录
+ * @param url 登录地址
  */
-let corp_user_login = async (username, password) => {
-    console.log('进来了')
+let login = async (username, password, url) => {
     let data = {
         username,
         password: md5(password)
     }
-    // return new Promise((resolve, rejects) => {
-    //     let res = null
-    //     axios.post(base_url + '/corp/user/login', params).then(
-    //         response => {
-    //             console.log(`res=${JSON.stringify(response)}`)
-    //             resolve(response.status)
-    //         }
-    //     ).catch(
-    //         error => {
-    //             rejects(error)
-    //         } 
-    //     )
-    // })
-
     let res = null
-    // await axios.post(base_url + 'corp/user/login', params).then(
-    //     response => {
-    //         console.log(`res=${JSON.stringify(response)}`)
-    //         res = response.data
-    //     }
-    // ).catch(
-    //     error => {
-    //         throw error
-    //     } 
-    // )
     await request({
-        url: '/corp/user/login',
+        // url: '/corp/user/login',
+        url,
         method: 'post',
         data
     }).then(
@@ -53,12 +30,11 @@ let corp_user_login = async (username, password) => {
     ).catch(
         error => {
             throw error
-        } 
+        }
     )
     return res
 }
 
 module.exports = {
-    corp_user_login
+    login
 }
-

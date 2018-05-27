@@ -7,7 +7,7 @@
                     <Input type="text" v-model="filter.title" icon="search" clearable placeholder="通过企业名称检索"/>
                 </FormItem>
                 <FormItem prop="kind">
-                    <Select v-model="filter.kind" placeholder="企业类型筛选" clearable>
+                    <Select v-model="filter.kind" placeholder="企业类型筛选" clearable style="width: 150px;">
                         <Option v-for="item in corpKinds" :value="item.value" :key="item.value">{{ item.value }}</Option>
                     </Select>
                 </FormItem>
