@@ -2,24 +2,39 @@
 <template>
     <Modal v-model="tranData.visible" :title="title" @on-ok="handleSave" @on-cancel="handleCancel" @on-visible-change="visibleChange" :loading="modal_loading">
         <Form ref="saveForm" :model="saveForm" :rules="ruleValidate" :label-width="80">
-            <FormItem label="所属企业" prop="corpId">
-                <Select v-model="saveForm.corpId" placeholder="请选择所属企业" @on-change="corpChange" clearable>
-                    <Option v-for="item in corpList" :value="item.id" :key="item.id">{{ item.title }}</Option>
+            <FormItem label="所属劳务队" prop="laborTeamId">
+                <Select v-model="saveForm.laborTeamId" placeholder="请选择所属劳务队" clearable>
+                    <Option v-for="item in laborTeamList" :value="item.id" :key="item.id">{{ item.title }}</Option>
                 </Select>
             </FormItem>
             <FormItem label="姓名" prop="name">
-                <Input v-model="saveForm.name" placeholder="请输入姓名"/>
-            </FormItem>
-            <FormItem label="用户名" prop="username">
-                <Input v-model="saveForm.username" placeholder="请输入用户名"/>
-            </FormItem>
-            <FormItem label="密码" prop="password" v-if="!tranData.edit">
-                <Input type="password" v-model="saveForm.password" placeholder="请输入密码"/>
+                <Input v-model="saveForm.name" placeholder="请输入劳务人员姓名"/>
             </FormItem>
             <FormItem label="职位" prop="position">
                 <Select v-model="saveForm.position" placeholder="请选择职位" clearable>
-                    <Option v-for="item in positions" :value="item.value" :key="item.value">{{ item.value }}</Option>
+                    <Option v-for="item in laborPositions" :value="item.value" :key="item.value">{{ item.value }}</Option>
                 </Select>
+            </FormItem>
+            <FormItem label="年龄" prop="age">
+                <Input v-model="saveForm.age" placeholder="请输入年龄"/>
+            </FormItem>
+            <FormItem label="性别" prop="gender">
+                <Select v-model="saveForm.gender" placeholder="请选择职位" clearable>
+                    <Option v-for="item in genders" :value="item.value" :key="item.value">{{ item.value }}</Option>
+                </Select>
+                <!-- <Input v-model="saveForm.gender" placeholder="请输入性别"/> -->
+            </FormItem>
+            <FormItem label="身份证号" prop="idCardNum">
+                <Input v-model="saveForm.idCardNum" placeholder="请输入身份证号"/>
+            </FormItem>
+            <FormItem label="银行卡号" prop="bankCardNum">
+                <Input v-model="saveForm.bankCardNum" placeholder="请输入银行卡号"/>
+            </FormItem>
+            <FormItem label="考勤卡号" prop="attendCardNum">
+                <Input v-model="saveForm.attendCardNum" placeholder="请输入考勤卡号"/>
+            </FormItem>
+            <FormItem label="入职日期" prop="entryDate">
+                <DatePicker type="date" v-model="saveForm.entryDate" placeholder="请输入入职日期"></DatePicker>
             </FormItem>
             <FormItem slot="footer">
                 <Button type="text" @click="handleCancel">取消</Button>
@@ -30,36 +45,55 @@
 </template>
 
 <script>
-import {save_user, get_user} from '../../api/corpUser.js'
-import {query_corp} from '@/api/corp.js'
+import {query_laborteam} from '../../api/laborteam.js'
+import {save_labor, get_labor}  from '@/api/labor.js'
+import Cookies from 'js-cookie'
 import { query_dic } from '@/api/dictionary.js'
 export default {
     data () {
         return {
             saveForm: { // 保存的form对象
-                corpId: '',
+                laborTeamId: '',
                 name: '',
-                username: '',
-                password: '',
-                position: ''
+                position: '',
+                age: 0,
+                gender: '',
+                idCardNum: '',
+                bankCardNum: '',
+                attendCardNum: '',
+                entryDate: new Date()
             },
-            corpList: [],
-            positions: [],
-            ruleValidate: { // 表单校验
-                corpId: [
-                    { required: true, message: '所属企业不能为空', trigger: 'blur' }
+            currentCorpId: JSON.parse(Cookies.get('user')).corpId,
+            laborTeamList: [],
+            laborPositions: [],
+            genders: [{value:'男', label: '男'},{value:'女', label: '女'}],
+            ruleValidate: {
+                laborTeamId: [
+                    { required: true, message: '所属劳务队不能为空', trigger: 'change' }
                 ],
                 name: [
-                    { required: true, message: '姓名不能为空', trigger: 'blur' }
-                ],
-                username: [
-                    { required: true, message: '用户名不能为空', trigger: 'blur' }
-                ],
-                password: [
-                    { required: true, message: '密码不能为空', trigger: 'blur' }
+                    { required: true, message: '劳务人员名字不能为空', trigger: 'blur' }
                 ],
                 position: [
-                    { required: true, message: '职位不能为空', trigger: 'blur' }
+                    { required: true, message: '劳务人员职位不能为空', trigger: 'blur' }
+                ],
+                age: [
+                    { required: true, type: 'number', message: '年龄不能为空', trigger: 'blur' }
+                ],
+                gender: [
+                    { required: true, message: '性别不能为空', trigger: 'change' }
+                ],
+                idCardNum: [
+                    { required: true, message: '身份证号不能为空', trigger: 'blur' }
+                ],
+                bankCardNum: [
+                    { required: true, message: '银行卡号不能为空', trigger: 'blur' }
+                ],
+                attendCardNum: [
+                    { required: true, message: '考勤卡号不能为空', trigger: 'blur' }
+                ],
+                entryDate: [
+                    { required: true, type: 'date', message: '入职日期不能为空', trigger: 'change' }
                 ]
             },
             modal_loading: true
@@ -75,22 +109,22 @@ export default {
     },
     computed: {
         title () {
-            this.saveForm.password = ''
-            this.ruleValidate.password[0].required = false
             return this.tranData.edit ? `修改${this.tranData.title}` : `添加${this.tranData.title}`
         }
     },
     created () {
+        this.getLaborteamList()
+        this.getlaborPositions()
+        // this.getGenders()
     },
     methods: {
-        getCorpList () {
-            query_corp({status: '已审核'}).then(
+        getLaborteamList () {
+            query_laborteam({corpId: this.currentCorpId}).then(
                 res => {
-                    this.corpList = res.rows
+                    this.laborTeamList = res.rows
                 }
             ).catch(
                 err => {
-                    this.loading = false
                     if (err.response.status === 400) {
                         this.$Message.error(err.response.data.message)
                     } else {
@@ -99,15 +133,12 @@ export default {
                 }
             )
         },
-        getPositions (corpKind = '') {
-            // if (corpKind === '') {
-            //     return
-            // }
-            console.log(corpKind)
+        getlaborPositions () {
             // 加载职位类型选择条件
-            query_dic({key: 'position', desc: corpKind}).then(
+            query_dic({key: 'laborPosition'}).then(
                 res => {
-                    this.positions = res.rows
+                    console.log(res.rows)
+                    this.laborPositions = res.rows
                 }
             ).catch(
                 err => {
@@ -119,18 +150,27 @@ export default {
                 }
             )
         },
-        corpChange (value) {
-            // this.saveForm.position = ''
-            let corps = this.corpList.filter(item => {
-                return item.id === value
-            })
-            if (corps.length > 0) {
-                this.getPositions(corps[0].kind)
-                console.log(this.saveForm.position)
-            }
+        getGenders () {
+            // 加载职位类型选择条件
+            query_dic({key: 'gender'}).then(
+                res => {
+                    console.log(res.rows)
+                    this.genders = res.rows
+                }
+            ).catch(
+                err => {
+                    if (err.response.status === 400) {
+                        this.$Message.error(err.response.data.message)
+                    } else {
+                        console.error(`err=${JSON.stringify(err)}`)
+                    }
+                }
+            )
         },
         handleSave () {
             console.warn('save')
+            
+            console.log(this.saveForm)
             this.$refs['saveForm'].validate((valid) => {
                 if (valid) {
                     console.warn('验证通过')
@@ -140,7 +180,7 @@ export default {
                         okText: '确定',
                         cancelText: '取消',
                         onOk: () => {
-                            save_user(this.saveForm).then(
+                            save_labor(this.saveForm).then(
                                 res => {
                                     this.$Message.success('保存成功')
                                     this.$emit('success')
@@ -173,37 +213,35 @@ export default {
             this.$refs['saveForm'].resetFields()
         },
         visibleChange (visible) {
-            this.getPositions()
-            this.getCorpList()
-            console.warn(visible ? '显示了' : '隐藏了')
+            console.warn(visible?'显示了':'隐藏了')
             if (visible) { // 当模态框显示时
                 if (this.tranData.edit) { // 当父组件传来编辑是true时，表明将要修改，则需获取到该编辑对象
                     this.getObjectById()
                 }
             } else { // 当模态框关闭时,重置表单
                 this.$refs['saveForm'].resetFields()
-                this.saveForm = {
-                    corpId: '',
+                this.saveForm = { 
+                    laborTeamId: '',
                     name: '',
-                    username: '',
-                    password: '',
-                    position: ''
-                }
-                this.corpList = []
-                this.positions = []
+                    position: '',
+                    age: 0,
+                    gender: '',
+                    idCardNum: '',
+                    bankCardNum: '',
+                    attendCardNum: '',
+                    entryDate: new Date()
+            },
                 console.warn('重置了')
             }
         },
         getObjectById () { // 通过父组件传来的id,获取到该对象
-            get_user(this.tranData.id).then(
+            get_labor(this.tranData.id).then(
                 res => {
                     console.warn(`res=${JSON.stringify(res)}`)
-                    this.saveForm.corpId = res.corpId
-                    this.saveForm.name = res.name
-                    this.saveForm.username = res.username
-                    this.saveForm.position = res.position
+                    console.log(res)
+                    this.saveForm = res
                 }
-            ).catch(
+            ).catch (
                 err => {
                     if (err.response.status === 400) {
                         this.$Message.error(err.response.data.message)
