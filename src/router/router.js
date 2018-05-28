@@ -288,7 +288,8 @@ export const appRouter = [
         //     roles: ['监管人员', '劳务公司经理','劳资员'] // you can set roles in root nav
         // },
         children: [
-            { path: 'laborteams', title: '劳务队管理', name: 'laborteams', icon: 'link', component: () => import('@/views/laborteam/laborteam-list.vue')}
+            { path: 'laborteams', title: '劳务队管理', name: 'laborteams', icon: 'link', component: () => import('@/views/laborteam/laborteam-list.vue')},
+            { path: 'labors', title: '劳务人员管理', name: 'labors', icon: 'link', component: () => import('@/views/laborteam/labor-list.vue')}
         ]
     },
     {
