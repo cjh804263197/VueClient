@@ -19,8 +19,8 @@
                     </Select>
                 </FormItem>
                 <FormItem>
-                    <Button type="primary" icon="ios-search-strong" @click="handleQuery()">查询</Button>
-                    <Button type="success" icon="ios-plus" @click="handleAdd()">添加</Button>
+                    <Button type="primary" icon="ios-search-strong" @click="handleQuery">查询</Button>
+                    <Button type="success" icon="ios-plus" @click="handleAdd">添加</Button>
                 </FormItem>
             </Form>
         </Row>
@@ -32,6 +32,8 @@
             <Page style="float: right;" :transfer="true" :current.sync="currentPage" :page-size="limit" :total="total" @on-change="currentPageChange" show-total></Page>
         </Row>
 
+        <project-laborteam-edit :tranData="tranData" @success="handleQuery"></project-laborteam-edit>
+
     </div>
 </template>
 
@@ -39,10 +41,14 @@
 import { query_corp } from '@/api/corp.js'
 import { query_project, query_project_laborteam } from '@/api/project.js'
 import { query_laborteam } from '@/api/laborteam.js'
+import projectLaborTeamEdit from './project-laborteam-edit'
 import Vue from 'vue'
 import Cookies from 'js-cookie'
 import { checkTime } from '@/libs/CommonUtil.js'
 export default {
+    components: {
+        'project-laborteam-edit': projectLaborTeamEdit
+    },
     data () {
         return {
             loginUser: JSON.parse(Cookies.get('user')),
