@@ -10,7 +10,7 @@
                 </FormItem>
                 <FormItem>
                     <Button type="primary" @click="handleQuery()">查询</Button>
-                    <Button type="success" @click="handleAdd()">添加</Button>
+                    <Button type="success" v-if="position !=='监管人员'" @click="handleAdd()">添加</Button>
                 </FormItem>
             </Form>
         </Row>
@@ -76,43 +76,6 @@ export default {
                     render: (h, params) => {
                         return h('div', Vue.filter('timefmt')(params.row.updatedAt))
                     }
-                },
-                {
-                    title: '操作',
-                    key: 'action',
-                    fixed: 'right',
-                    width: 150,
-                    render: (h, params) => {
-                        if (this.position !=='监管人员') {
-                            return h('div', [
-                                h('Button', {
-                                    props: {
-                                        type: 'warning',
-                                        size: 'small'
-                                    },
-                                    style: {
-                                        marginRight: '5px'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.handleEdit(params.row.id)
-                                        }
-                                    }
-                                }, '修改'),
-                                h('Button', {
-                                    props: {
-                                        type: 'error',
-                                        size: 'small'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.handleDelete(params.row.id)
-                                        }
-                                    }
-                                }, '删除')
-                            ]);
-                        }
-                    }
                 }
             ],
             datas: [], // 存放查询结果数据
@@ -130,6 +93,44 @@ export default {
     created () {
         this.handleQuery()
         this.getCorpList()
+        if (this.position !=='监管人员') {
+            this.columns.push({
+                title: '操作',
+                key: 'action',
+                fixed: 'right',
+                width: 150,
+                hidden: this.position ==='监管人员',
+                render: (h, params) => {
+                    return h('div', [
+                        h('Button', {
+                            props: {
+                                type: 'warning',
+                                size: 'small'
+                            },
+                            style: {
+                                marginRight: '5px'
+                            },
+                            on: {
+                                click: () => {
+                                    this.handleEdit(params.row.id)
+                                }
+                            }
+                        }, '修改'),
+                        h('Button', {
+                            props: {
+                                type: 'error',
+                                size: 'small'
+                            },
+                            on: {
+                                click: () => {
+                                    this.handleDelete(params.row.id)
+                                }
+                            }
+                        }, '删除')
+                    ]);
+                }
+            })
+        }
     },
     methods: {
         getCorpList () {

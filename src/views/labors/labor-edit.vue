@@ -16,13 +16,16 @@
                 </Select>
             </FormItem>
             <FormItem label="年龄" prop="age">
-                <Input v-model="saveForm.age" placeholder="请输入年龄"/>
+                <InputNumber
+                style="width:200px;"
+                :max="100"
+                v-model="saveForm.age"
+                ></InputNumber>
             </FormItem>
             <FormItem label="性别" prop="gender">
-                <Select v-model="saveForm.gender" placeholder="请选择职位" clearable>
+                <Select v-model="saveForm.gender" placeholder="请选择性别" clearable>
                     <Option v-for="item in genders" :value="item.value" :key="item.value">{{ item.value }}</Option>
                 </Select>
-                <!-- <Input v-model="saveForm.gender" placeholder="请输入性别"/> -->
             </FormItem>
             <FormItem label="身份证号" prop="idCardNum">
                 <Input v-model="saveForm.idCardNum" placeholder="请输入身份证号"/>
@@ -52,7 +55,9 @@ import { query_dic } from '@/api/dictionary.js'
 export default {
     data () {
         return {
+            currentCorpId: JSON.parse(Cookies.get('user')).corpId,
             saveForm: { // 保存的form对象
+                corpId: '',
                 laborTeamId: '',
                 name: '',
                 position: '',
@@ -63,7 +68,7 @@ export default {
                 attendCardNum: '',
                 entryDate: new Date()
             },
-            currentCorpId: JSON.parse(Cookies.get('user')).corpId,
+            
             laborTeamList: [],
             laborPositions: [],
             genders: [{value:'男', label: '男'},{value:'女', label: '女'}],
@@ -119,6 +124,7 @@ export default {
     },
     methods: {
         getLaborteamList () {
+            console.log(this.currentCorpId)
             query_laborteam({corpId: this.currentCorpId}).then(
                 res => {
                     this.laborTeamList = res.rows
@@ -169,8 +175,8 @@ export default {
         },
         handleSave () {
             console.warn('save')
-            
-            console.log(this.saveForm)
+            this.saveForm.corpId = this.currentCorpId
+            console.log('saveForm', this.saveForm)
             this.$refs['saveForm'].validate((valid) => {
                 if (valid) {
                     console.warn('验证通过')
@@ -221,6 +227,7 @@ export default {
             } else { // 当模态框关闭时,重置表单
                 this.$refs['saveForm'].resetFields()
                 this.saveForm = { 
+                    corpId: '',
                     laborTeamId: '',
                     name: '',
                     position: '',

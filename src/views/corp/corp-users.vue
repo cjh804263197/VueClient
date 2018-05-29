@@ -11,7 +11,7 @@
                 </FormItem>
                 <FormItem>
                     <Button type="primary" @click="handleQuery()">查询</Button>
-                    <Button type="success" @click="handleAdd()">添加</Button>
+                    <Button type="success" v-if="position ==='监管人员'" @click="handleAdd()">添加</Button>
                 </FormItem>
             </Form>
         </Row>
@@ -29,6 +29,7 @@
 import {destory_user, query_user} from '@/api/corpUser.js'
 import cropUserEdit from './crop-user-edit'
 import {query_corp} from '@/api/corp.js'
+import Cookies from 'js-cookie'
 import Vue from 'vue'
 export default {
     components: {
@@ -39,6 +40,8 @@ export default {
             filter: { // 搜索条件
                 corpId: ''
             },
+            currentCorpId: JSON.parse(Cookies.get('user')).corpId,
+             position: JSON.parse(Cookies.get('user')).position,
             corpList: [],
             loading: false, // table的加载状态 默认为false
             columns: [ // Table title
@@ -74,41 +77,6 @@ export default {
                     render: (h, params) => {
                         return h('div', Vue.filter('timefmt')(params.row.updatedAt))
                     }
-                },
-                {
-                    title: '操作',
-                    key: 'action',
-                    fixed: 'right',
-                    width: 150,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'warning',
-                                    size: 'small'
-                                },
-                                style: {
-                                    marginRight: '5px'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.handleEdit(params.row.id)
-                                    }
-                                }
-                            }, '修改'),
-                            h('Button', {
-                                props: {
-                                    type: 'error',
-                                    size: 'small'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.handleDelete(params.row.id)
-                                    }
-                                }
-                            }, '删除')
-                        ]);
-                    }
                 }
             ],
             datas: [], //存放查询结果数据
@@ -126,10 +94,48 @@ export default {
     created () {
         this.handleQuery()
         this.getCorpList()
+        if (this.position ==='监管人员') {
+            this.columns.push({
+                title: '操作',
+                key: 'action',
+                fixed: 'right',
+                width: 150,
+                hidden: this.position ==='监管人员',
+                render: (h, params) => {
+                    return h('div', [
+                        h('Button', {
+                            props: {
+                                type: 'warning',
+                                size: 'small'
+                            },
+                            style: {
+                                marginRight: '5px'
+                            },
+                            on: {
+                                click: () => {
+                                    this.handleEdit(params.row.id)
+                                }
+                            }
+                        }, '修改'),
+                        h('Button', {
+                            props: {
+                                type: 'error',
+                                size: 'small'
+                            },
+                            on: {
+                                click: () => {
+                                    this.handleDelete(params.row.id)
+                                }
+                            }
+                        }, '删除')
+                    ]);
+                }
+            })
+        }
     },
     methods: {
         getCorpList () {
-            query_corp({status: '已审核'}).then(
+            query_corp({status: '已审核', id: this.currentCorpId}).then(
                 res => {
                     this.corpList = res.rows
                 }
@@ -179,8 +185,13 @@ export default {
         handleQuery (current = 1) { // 处理查询按钮事件
             this.currentPage = current
             this.loading = true
-            console.log(this.filter.corpId)
-            query_user({corpId: this.filter.corpId, limit: this.limit, currentPage: this.currentPage}).then(
+             let corpId = ''
+            if (this.currentCorpId !== undefined && this.currentCorpId !== null && this.currentCorpId !== '') {
+                corpId = this.currentCorpId
+            } else {
+                corpId = this.filter.corpId
+            }
+            query_user({corpId: corpId, limit: this.limit, currentPage: this.currentPage}).then(
                 res => {
                     console.log(res.rows)
                     this.loading = false
