@@ -9,8 +9,8 @@
                     </Select>
                 </FormItem>
                 <FormItem>
-                    <Button type="primary" @click="handleQuery">查询</Button>
-                    <Button type="success" @click="handleAdd">添加</Button>
+                    <Button type="primary" @click="handleQuery()">查询</Button>
+                    <Button type="success" v-if="position !=='监管人员'" @click="handleAdd()">添加</Button>
                 </FormItem>
             </Form>
         </Row>
@@ -18,7 +18,7 @@
             <!-- 一个带斑马纹和加载状态的Table -->
             <Table stripe :loading="loading" :columns="columns" :data="datas"></Table>
             <!-- 分页控件 -->
-            <Page style="float: right;" :transfer="true" :current.sync="currentPage" :page-size="limit" :total="total" @on-change="currentPageChange" show-total></Page>
+            <Page style="float: right;" :transfer="true" :current.sync="currentPage" :page-size="limit" :total="total" @on-change="currentPageChange()" show-total></Page>
         </Row>
         <laborteam-edit :tranData="tranData" @success="handleQuery"></laborteam-edit>
     </div>
@@ -40,6 +40,7 @@ export default {
                 corpId: ''
             },
             currentCorpId: JSON.parse(Cookies.get('user')).corpId,
+            position: JSON.parse(Cookies.get('user')).position,
             corpList: [],
             loading: false, // table的加载状态 默认为false
             columns: [ // Table title
@@ -75,41 +76,6 @@ export default {
                     render: (h, params) => {
                         return h('div', Vue.filter('timefmt')(params.row.updatedAt))
                     }
-                },
-                {
-                    title: '操作',
-                    key: 'action',
-                    fixed: 'right',
-                    width: 150,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'warning',
-                                    size: 'small'
-                                },
-                                style: {
-                                    marginRight: '5px'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.handleEdit(params.row.id)
-                                    }
-                                }
-                            }, '修改'),
-                            h('Button', {
-                                props: {
-                                    type: 'error',
-                                    size: 'small'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.handleDelete(params.row.id)
-                                    }
-                                }
-                            }, '删除')
-                        ]);
-                    }
                 }
             ],
             datas: [], // 存放查询结果数据
@@ -127,6 +93,44 @@ export default {
     created () {
         this.handleQuery()
         this.getCorpList()
+        if (this.position !=='监管人员') {
+            this.columns.push({
+                title: '操作',
+                key: 'action',
+                fixed: 'right',
+                width: 150,
+                hidden: this.position ==='监管人员',
+                render: (h, params) => {
+                    return h('div', [
+                        h('Button', {
+                            props: {
+                                type: 'warning',
+                                size: 'small'
+                            },
+                            style: {
+                                marginRight: '5px'
+                            },
+                            on: {
+                                click: () => {
+                                    this.handleEdit(params.row.id)
+                                }
+                            }
+                        }, '修改'),
+                        h('Button', {
+                            props: {
+                                type: 'error',
+                                size: 'small'
+                            },
+                            on: {
+                                click: () => {
+                                    this.handleDelete(params.row.id)
+                                }
+                            }
+                        }, '删除')
+                    ]);
+                }
+            })
+        }
     },
     methods: {
         getCorpList () {
@@ -178,7 +182,7 @@ export default {
                 }
             })
         },
-        handleQuery (current = 1) { // 处理查询按钮事件
+      handleQuery (current = 1) { // 处理查询按钮事件
             this.currentPage = current
             this.loading = true
             let corpId = ''
@@ -187,7 +191,7 @@ export default {
             } else {
                 corpId = this.filter.corpId
             }
-            query_laborteam({'like%corpId': corpId, limit: this.limit, currentPage: this.currentPage}).then(
+            query_laborteam({corpId: corpId, limit: this.limit, currentPage: this.currentPage}).then(
                 res => {
                     console.log(res.rows)
                     this.loading = false
