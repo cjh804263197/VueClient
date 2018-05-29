@@ -107,7 +107,7 @@ export default {
                     editable: true
                 },
                 {
-                    title: '实际出勤天数',
+                    title: '实出勤天数',
                     key: 'actualAttendDay',
                     align: 'center',
                     editable: true

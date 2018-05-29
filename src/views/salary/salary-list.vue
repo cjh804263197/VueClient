@@ -39,16 +39,23 @@
             <Page style="float: right;" :transfer="true" :current.sync="currentPage" :page-size="limit" :total="total" @on-change="currentPageChange" show-total></Page>
         </Row>
         
+        <salary-edit :tranData="tranData" @success="handleQuery"></salary-edit>
     </div>
 </template>
 
 <script>
 import { query_project_laborteam } from '@/api/project.js'
 import { query_laborteam } from '@/api/laborteam.js'
-import { query_corp } from '../../api/corp.js'
+import { query_corp } from '@/api/corp.js'
+import { query_salary, save_salary } from '@/api/salary.js'
+import { query_dic } from '@/api/dictionary.js'
 import Vue from 'vue'
 import Cookies from 'js-cookie'
+import salaryEdit from './salary-edit'
 export default {
+    components: {
+        'salary-edit': salaryEdit
+    },
     data () {
         return {
             loginUser: JSON.parse(Cookies.get('user')),
@@ -58,6 +65,10 @@ export default {
                 laborCorpId: JSON.parse(Cookies.get('user')).position === '劳务公司经理' || JSON.parse(Cookies.get('user')).position === '劳资员' ? JSON.parse(Cookies.get('user')).corpId : '' ,
                 laborTeamId: '',
                 status: ''
+            },
+            tranData: {
+                visible: false,
+                id: ''
             },
             projects: [],
             laborCorps: [],
@@ -69,51 +80,48 @@ export default {
             limit: 10, // 页大小
             columns: [
                 {
-                    type: 'expand',
-                    width: 50,
-                    render: (h, params) => {
-                        return h(expandRow, {
-                            props: {
-                                row: params.row
-                            }
-                        })
-                    }
-                },
-                {
                     title: '项目名称',
-                    key: 'title'
-                },
-                {
-                    title: '建设单位',
-                    key: 'BuildCorp',
+                    key: 'Project',
                     render: (h, params) => {
-                        return h('div', params.row.BuildCorps.title)
+                        return h('div', params.row.Project.title)
                     }
                 },
                 {
-                    title: '施工总承包单位',
-                    key: 'ConstructCorp',
+                    title: '劳务队',
+                    key: 'LaborTeam',
                     render: (h, params) => {
-                        return h('div', params.row.ConstructCorps.title)
+                        return h('div', params.row.LaborTeam.title)
                     }
                 },
                 {
-                    title: '项目状态',
+                    title: '劳务人员',
+                    key: 'Labor',
+                    render: (h, params) => {
+                        return h('div', params.row.Labor.name)
+                    }
+                },
+                {
+                    title: '年月',
+                    key: 'yearMonth',
+                    render: (h, params) => {
+                        return h('div', `${params.row.year}-${params.row.month}`)
+                    }
+                },
+                {
+                    title: '应出勤天数',
+                    key: 'standardAttendDay'
+                },
+                {
+                    title: '实出勤天数',
+                    key: 'actualAttendDay'
+                },
+                {
+                    title: '工资',
+                    key: 'money'
+                },
+                {
+                    title: '状态',
                     key: 'status'
-                },
-                {
-                    title: '开工日期',
-                    key: 'startDate',
-                    render: (h, params) => {
-                        return h('div', Vue.filter('datefmt')(params.row.startDate))
-                    }
-                },
-                {
-                    title: '竣工日期',
-                    key: 'completeDate',
-                    render: (h, params) => {
-                        return h('div', Vue.filter('datefmt')(params.row.completeDate))
-                    }
                 },
                 {
                     title: '添加时间',
@@ -133,12 +141,12 @@ export default {
                     title: '操作',
                     key: 'action',
                     fixed: 'right',
-                    width: 220,
+                    width: 180,
                     render: (h, params) => {
-                        if (params.row.status === '未审核') { // 若为未审核状态
-                            if (this.loginUser.position === '监管人员') { // 监管人员可以审核
-                                return h('Button', { props: {
-                                    type: 'info',
+                        if (params.row.status === '未审核' && this.loginUser.position === '劳资员') { // 若为待审核状态
+                            return h('div', [
+                                h('Button', { props: {
+                                    type: 'success',
                                     size: 'small',
                                     icon: 'ios-checkmark'
                                 },
@@ -150,61 +158,26 @@ export default {
                                         this.handleAudit(params.row.id)
                                     }
                                 }
-                                }, '审核')
-                            } else if (this.loginUser.position === '建设单位主管') { // 建设单位主管可以进行修改及删除
-                                return h('div', [
-                                    h('Button', {
-                                        props: {
-                                            type: 'warning',
-                                            size: 'small',
-                                            icon: 'ios-compose'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                this.handleEdit(params.row.id)
-                                            }
+                                }, '审核'),
+                                h('Button', {
+                                    props: {
+                                        type: 'warning',
+                                        size: 'small',
+                                        icon: 'ios-compose'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.handleEdit(params.row.id)
                                         }
-                                    }, '修改'),
-                                    h('Button', {
-                                        props: {
-                                            type: 'error',
-                                            size: 'small',
-                                            icon: 'ios-trash'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                this.handleDelete(params.row.id)
-                                            }
-                                        }
-                                    }, '删除')
-                                ])
-                            } else { // 其他人员什么都不能做
-                                return h('div')
-                            }
-                        } else { // 若状态为已审核
-                            if (this.loginUser.position === '建设单位主管' || this.loginUser.position === '项目经理') {
-                                return h('Button', { props: {
-                                    type: 'info',
-                                    size: 'small',
-                                    icon: 'ios-checkmark'
-                                },
-                                style: {
-                                    marginRight: '5px'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.handleLaborTeamRela(params.row.id)
                                     }
-                                }
-                                }, '劳务关系')
-                            } else { // 其他人员什么都不能做
-                                return h('div')
-                            }
+                                }, '修改')
+                            ])
+                        } else { // 其他人员什么都不能做
+                            return h('div')
                         }
-                        
                     }
                 }
             ]
@@ -221,6 +194,7 @@ export default {
         this.getLaborCorps()
         this.getLaborTeams()
         this.getSalaryStatus()
+        this.handleQuery()
     },
     methods: {
         getProjects () { // 获取可选项目的数组
@@ -273,9 +247,11 @@ export default {
                 }
             )
         },
-        getLaborTeams (laborCorpId = this.filter.laborTeamId) {
+        getLaborTeams (laborCorpId = this.filter.laborCorpId) { // 获取可选劳务队的数组
             query_laborteam({corpId: laborCorpId}).then(
-                this.laborTeams = res.rows
+                res => {
+                    this.laborTeams = res.rows
+                }
             ).catch(
                 err => {
                     if (err.response.status === 400) {
@@ -286,7 +262,7 @@ export default {
                 }
             )
         },
-        getSalaryStatus () {
+        getSalaryStatus () { // 获取工资状态数组
             query_dic({key: 'SalaryStatus'}).then(
                 res => {
                     this.salaryStatus = res.rows
@@ -301,14 +277,69 @@ export default {
                 }
             )
         },
-        yearMonthChange (value) {
+        yearMonthChange (value) { // 年月值改变事件
             this.filter.yearAndMonth = value
         },
-        laborCorpChange (value) {
+        laborCorpChange (value) { // 劳务公司改变事件
             this.getLaborTeams(value)
         },
-        handleQuery () {
-
+        currentPageChange (value) { // 当前页改变事件
+            this.handleQuery(value)
+        },
+        handleAudit (id) { // 处理审核按钮事件
+            this.$Modal.confirm({
+                title: '提示',
+                content: '<p>确定要审核该工资吗？</p>',
+                okText: '确定',
+                cancelText: '取消',
+                onOk: () => {
+                    save_salary({id, status: '已审核'}).then(
+                        res => {
+                            this.$Message.success('审核成功')
+                            this.handleQuery()
+                        }
+                    ).catch(
+                        err => {
+                            if (err.response.status === 400) {
+                                this.$Message.error('审核失败， 原因：' + err.response.data.message)
+                            } else {
+                                this.$Message.error('审核失败')
+                                console.error(`err=${JSON.stringify(err)}`)
+                            }
+                        }
+                    )
+                }
+            })
+        },
+        handleEdit (id) { // 处理编辑按钮点击事件
+            console.warn('进来了')
+            this.tranData.visible = true
+            this.tranData.id = id
+        },
+        handleQuery (current = 1) { // 处理查询事件
+            this.currentPage = current
+            this.loading = true
+            let param = {
+                projectId: this.filter.projectId, 
+                'LaborTeam.corpId': this.filter.laborCorpId, 
+                laborTeamId: this.filter.laborTeamId,
+                status: this.filter.status
+            }
+            if (this.filter.yearAndMonth !== '') {
+                let yms = this.filter.yearAndMonth.split('-')
+                param = {...param, year: parseInt(yms[0]), month: parseInt(yms[1])}
+            }
+            query_salary(param).then(res => {
+                this.loading = false
+                this.total = res.count
+                this.datas = res.rows
+            }).catch(err => {
+                if (err.response.status === 400) {
+                    this.$Message.error(err.response.data.message)
+                } else {
+                    console.error(`err=${JSON.stringify(err)}`)
+                }
+            })
         }
     }
 }
