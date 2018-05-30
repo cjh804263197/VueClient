@@ -116,6 +116,16 @@ export const appRouter = [
             { path: 'salary-add', title: '工资录入', name: 'salary-add', icon: 'link', component: () => import('@/views/salary/salary-add.vue') },
             { path: 'salary-list', title: '工资查询', name: 'salary-list', icon: 'link', component: () => import('@/views/salary/salary-list.vue') }
         ]
+    },
+    {
+        path: '/settlefile-manage',
+        icon: 'ios-infinite',
+        name: 'settlefile-manage',
+        title: '结算文件管理',
+        component: Main,
+        children: [
+            { path: 'settlefile-list', title: '结算文件', name: 'settlefile-list', icon: 'link', component: () => import('@/views/settlefile/settlefile-list.vue') }
+        ]
     }
 ]
 
