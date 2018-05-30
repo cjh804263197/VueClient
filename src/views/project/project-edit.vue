@@ -16,6 +16,9 @@
         <FormItem label="项目地址" prop="addr">
             <Input v-model="projectForm.addr" placeholder="请输入项目地址"/>
         </FormItem>
+        <FormItem label="项目账户" prop="addr">
+            <Input v-model="projectForm.account" placeholder="请输入项目账户"/>
+        </FormItem>
         <FormItem label="施工许可证号码" prop="buildLicenceCerNum">
             <Input v-model="projectForm.buildLicenceCerNum" placeholder="请输入施工许可证号码"/>
         </FormItem>
@@ -130,6 +133,7 @@ export default {
                 title: '',
                 constructCorpId: '',
                 addr: '',
+                account: '',
                 buildLicenceCerNum: '',
                 buildArea: 0,
                 struct: '',

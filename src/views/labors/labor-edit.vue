@@ -55,9 +55,8 @@ import { query_dic } from '@/api/dictionary.js'
 export default {
     data () {
         return {
-            currentCorpId: JSON.parse(Cookies.get('user')).corpId,
             saveForm: { // 保存的form对象
-                corpId: '',
+                corpId: JSON.parse(Cookies.get('user')).corpId,
                 laborTeamId: '',
                 name: '',
                 position: '',
@@ -174,9 +173,6 @@ export default {
             )
         },
         handleSave () {
-            console.warn('save')
-            this.saveForm.corpId = this.currentCorpId
-            console.log('saveForm', this.saveForm)
             this.$refs['saveForm'].validate((valid) => {
                 if (valid) {
                     console.warn('验证通过')

@@ -14,7 +14,9 @@
                 <FormItem>
                     <Button type="primary" icon="ios-search-strong" @click="handleQuery()">查询</Button>
                     <Button type="primary" icon="ios-box" @click="handleCreate()">生成结算文件</Button>
-                    <Button type="primary" icon="ios-cloud-upload" @click="handleUpload()">上传结算报告</Button>
+                    <Upload :action="upload_url" :format="['txt']" :with-credentials="true" name="reportFile">
+                        <Button type="primary" icon="ios-cloud-upload" @click="handleUpload()">上传结算报告</Button>
+                    </Upload>
                 </FormItem>
             </Form>
         </Row>
@@ -26,7 +28,7 @@
             <Page style="float: right;" :transfer="true" :current.sync="currentPage" :page-size="limit" :total="total" @on-change="currentPageChange" show-total></Page>
         </Row>
 
-        <settlefile-create :tranData="tranData"></settlefile-create>
+        <settlefile-create :tranData="tranData" @success="handleQuery"></settlefile-create>
     </div>
 </template>
 
@@ -56,6 +58,7 @@ export default {
             total: 0, // 查询总记录数
             currentPage: 1, // 当前页
             limit: 10, // 页大小
+            upload_url: baseUrl+'api/settlefile/uploadReport',
             columns: [
                 {
                     title: '文件名称',
@@ -133,9 +136,6 @@ export default {
         },
         handleCreate () {
             this.tranData.visible = true
-        },
-        handleUpload () {
-
         },
         handleQuery (current = 1) { // 处理查询事件
             this.currentPage = current

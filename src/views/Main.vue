@@ -140,6 +140,7 @@
                     this.$router.push({
                         name: 'login'
                     })
+                    window.location.reload()
                 }
             },
             checkTag (name) {

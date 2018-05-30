@@ -75,7 +75,7 @@ let get_salary = async (id) => {
 }
 
 /**
- * 查询企业列表
+ * 查询工资列表
  * @param {*} param 查询参数
  */
 let query_salary = async (param) => {

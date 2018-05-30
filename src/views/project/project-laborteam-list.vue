@@ -20,7 +20,7 @@
                 </FormItem>
                 <FormItem>
                     <Button type="primary" icon="ios-search-strong" @click="handleQuery">查询</Button>
-                    <Button type="success" icon="ios-plus" @click="handleAdd">添加</Button>
+                    <Button v-if="loginUser.position === '项目经理'" type="success" icon="ios-plus" @click="handleAdd">添加</Button>
                 </FormItem>
             </Form>
         </Row>
@@ -212,11 +212,7 @@ export default {
                 }
             )
         },
-        getLaborTeams (laborCorpId = '') {
-            if (laborCorpId === '') {
-                this.laborTeams = []
-                return
-            }
+        getLaborTeams (laborCorpId = this.filter.corpId) {
             query_laborteam({corpId: laborCorpId}).then(
                 res => {
                     this.laborTeams = res.rows

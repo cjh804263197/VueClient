@@ -27,11 +27,14 @@
 <script>
 import {save_laborteam, get_laborteam} from '../../api/laborteam.js'
 import {query_corp} from '@/api/corp.js'
+import Vue from 'vue'
+import Cookies from 'js-cookie'
 export default {
     data () {
         return {
+            loginUser: JSON.parse(Cookies.get('user')),
             saveForm: { // 保存的form对象
-                corpId: '',
+                corpId: JSON.parse(Cookies.get('user')).corpId,
                 title: '',
                 leader: '',
                 leaderTel: ''
@@ -72,7 +75,7 @@ export default {
     },
     methods: {
         getCorpList () {
-            query_corp({status: '已审核', kind: '劳务公司'}).then(
+            query_corp({status: '已审核', kind: '劳务公司', id: this.loginUser.corpId}).then(
                 res => {
                     this.corpList = res.rows
                 }

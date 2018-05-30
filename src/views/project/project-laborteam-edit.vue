@@ -89,7 +89,7 @@ export default {
     },
     methods: {
         getProjectList () { // 加载项目列表
-            query_project({constructCorpId: this.currentUser.Corp.id, status: '已审核'}).then(
+            query_project({constructCorpId: this.currentUser.corpId ? this.currentUser.corpId : '', status: '已审核'}).then(
                 res => {
                     this.projects = res.rows
                 }

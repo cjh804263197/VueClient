@@ -80,7 +80,10 @@ export default {
                 },
                 {
                     title: '性别',
-                    key: 'gender'
+                    key: 'gender',
+                    render: (h, params) => {
+                        return h('div', params.row.gender ? '男' : '女')
+                    }
                 },
                 {
                     title: '身份证号',
@@ -96,7 +99,10 @@ export default {
                 },
                 {
                     title: '入职日期',
-                    key: 'entryDate'
+                    key: 'entryDate',
+                    render: (h, params) => {
+                        return h('div', Vue.filter('datefmt')(params.row.entryDate))
+                    }
                 },
                 {
                     title: '添加时间',
