@@ -9,7 +9,6 @@ let save_labor = async (param) => {
     // 首先删除参数中的添加和修改时间，防止在修改的时候这两个字段被修改
     delete param.createdAt
     delete param.updatedAt
-    
     console.warn(`data=${JSON.stringify(param)}`)
     let res = null
     await request({

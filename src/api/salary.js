@@ -50,7 +50,7 @@ let destory_salary = async (id) => {
     return res
 }
 /**
- * 获取企业
+ * 获取单条工资记录
  */
 let get_salary = async (id) => {
     let data = {

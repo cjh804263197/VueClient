@@ -10,7 +10,7 @@ let save_user = async (param) => {
     // 首先删除参数中的添加和修改时间，防止在修改的时候这两个字段被修改
     delete param.createdAt
     delete param.updatedAt
-    if(param.password !== '') {
+    if (param.password !== '') {
         param.password = util.md5(param.password)
     } else {
         delete param.password
