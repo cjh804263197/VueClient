@@ -14,15 +14,12 @@ export default {
     },
     mounted () {
         this.$nextTick(() => {
-            console.warn('进来了1')
             this.initChartBar()
             this.query()
-        })
-            
+        })      
     },
     methods: {
         initChartBar () {
-            console.warn('进来了2')
             this.chartBar = echarts.init(document.getElementById('data_source_con'))
         },
         drawBarChart (res) {
@@ -73,7 +70,6 @@ export default {
             })
         },
         query () {
-            console.warn('进来了3')
             corp_statistic({}).then(
                 res => {
                     console.warn(res)
