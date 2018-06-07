@@ -120,10 +120,41 @@ let batch_create_salary = async (param) => {
     return res
 }
 
+/**
+ * 工资状态统计查询
+ * @param {*} param 参数
+ */
+let salary_statistic = async (param) => {
+    let res = null
+    await request({
+        url: '/salary/statistic',
+        method: 'post',
+        data: param
+    }).then(
+        response => {
+            res = response.data
+        }
+    ).catch(
+        error => {
+            throw error
+        }
+    )
+    let itemStyles = [
+        {normal: {color: '#9bd598'}},
+        {normal: {color: '#ffd58f'}},
+        {normal: {color: '#abd5f2'}}
+    ]
+    res = res.map((item, index) => {
+        return {value: item.count, name: item.status, itemStyle: itemStyles[index]}
+    })
+    return res
+}
+
 module.exports = {
     get_salary,
     save_salary,
     query_salary,
     destory_salary,
+    salary_statistic,
     batch_create_salary
 }

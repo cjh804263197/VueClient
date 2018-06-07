@@ -151,6 +151,21 @@ export const appRouter = [
         children: [
             { path: 'settlefile-list', title: '结算文件', name: 'settlefile-list', icon: 'link', component: () => import('@/views/settlefile/settlefile-list.vue') }
         ]
+    },
+    {
+        path: '/statistic',
+        icon: 'ios-infinite',
+        name: 'statistic',
+        title: '数据统计',
+        component: Main,
+        meta: {
+            roles: ['监管人员']
+        },
+        children: [
+            { path: 'corp-statistic', title: '公司类型状态统计', name: 'corp-statistic', icon: 'link', component: () => import('@/views/statistic/corp-chart.vue') },
+            { path: 'project-statistic', title: '项目状态统计', name: 'project-statistic', icon: 'link', component: () => import('@/views/statistic/project-chart.vue') },
+            { path: 'salary-statistic', title: '工资状态统计', name: 'salary-statistic', icon: 'link', component: () => import('@/views/statistic/salary-chart.vue') }
+        ]
     }
 ]
 

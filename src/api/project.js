@@ -176,11 +176,41 @@ let query_project_laborteam = async (param) => {
     return res
 }
 
+/**
+ * 项目状态统计查询
+ * @param {*} param 参数
+ */
+let project_statistic = async (param) => {
+    let res = null
+    await request({
+        url: '/project/statistic',
+        method: 'post',
+        data: param
+    }).then(
+        response => {
+            res = response.data
+        }
+    ).catch(
+        error => {
+            throw error
+        }
+    )
+    let itemStyles = [
+        {normal: {color: '#9bd598'}},
+        {normal: {color: '#ffd58f'}}
+    ]
+    res = res.map((item, index) => {
+        return {value: item.count, name: item.status, itemStyle: itemStyles[index]}
+    })
+    return res
+}
+
 module.exports = {
     save_project,
     destory_project,
     get_project,
     query_project,
+    project_statistic,
     save_project_laborteam,
     get_project_laborteam,
     query_project_laborteam

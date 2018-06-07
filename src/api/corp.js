@@ -104,9 +104,48 @@ let query_corp = async (param) => {
     return res
 }
 
+/**
+ * 企业分类状态统计查询
+ * @param {*} param 参数
+ */
+let corp_statistic = async (param) => {
+    let res = null
+    await request({
+        url: '/corp/statistic',
+        method: 'post',
+        data: param
+    }).then(
+        response => {
+            res = response.data
+        }
+    ).catch(
+        error => {
+            throw error
+        }
+    )
+    // 数据加工
+    let result = {
+        kindList: [],
+        effList: [],
+        invList: []
+    }
+    for (let i = 0; i < res.length; i++) {
+        if (result.kindList.indexOf(res[i].kind) === -1) {
+            result.kindList.push(res[i].kind)
+        }
+        if (res[i].status === '未审核') {
+            result.invList.push(res[i].count)
+        } else {
+            result.effList.push(res[i].count)
+        }
+    }
+    return result
+}
+
 module.exports = {
     get_corp,
     save_corp,
     query_corp,
-    destory_corp
+    destory_corp,
+    corp_statistic
 }

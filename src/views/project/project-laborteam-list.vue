@@ -167,6 +167,7 @@ export default {
             this.getProjects()
         }
         this.getLaborCorps()
+        this.getLaborTeams()
         this.handleQuery()
     },
     methods: {
@@ -212,7 +213,8 @@ export default {
                 }
             )
         },
-        getLaborTeams (laborCorpId = this.filter.corpId) {
+        getLaborTeams (laborCorpId = JSON.parse(Cookies.get('user')).position === '劳务公司经理' ? JSON.parse(Cookies.get('user')).corpId : '') {
+            console.warn(`laborCorpId=${laborCorpId}`)
             query_laborteam({corpId: laborCorpId}).then(
                 res => {
                     this.laborTeams = res.rows
@@ -243,7 +245,7 @@ export default {
             this.tranData.id = id
         },
         handleQuery (current = 1) { // 处理查询按钮事件
-            this.currentPage = current
+            // this.currentPage = current
             this.loading = true
             let condition = {projectId: this.filter.projectId, laborCorpId: this.filter.laborCorpId, laborTeamId: this.filter.laborTeamId}
             if (this.loginUser.position === '建设单位主管') {
